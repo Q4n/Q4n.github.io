@@ -12,6 +12,16 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
 <meta name="theme-color" content="#222">
 
+<script>
+    (function(){
+        if(''){
+            if (prompt('password?') !== ''){
+                alert('wrong passwd!');
+                history.back();
+            }
+        }
+    })();
+</script>
 
 
 
@@ -87,7 +97,7 @@
 <meta property="og:site_name" content="Q4n&#39;s Blog">
 <meta property="og:description" content="TCTF 2017 final Python第一次接触cpython, 跟着大师傅们的步伐开始学习. 题目简介因为没打过, 所以以下都是来源于参考资料中师傅们的题目简介  python2.7“一个除了sys模块，连file object都用不了的Python2”  环境搭建123456git clone https://github.com/python/cpython.git -b 2.7cd">
 <meta property="og:locale" content="zh-Hans">
-<meta property="og:updated_time" content="2019-10-01T06:20:12.051Z">
+<meta property="og:updated_time" content="2019-10-01T06:57:30.831Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="TCTF 2017 final Python">
 <meta name="twitter:description" content="TCTF 2017 final Python第一次接触cpython, 跟着大师傅们的步伐开始学习. 题目简介因为没打过, 所以以下都是来源于参考资料中师傅们的题目简介  python2.7“一个除了sys模块，连file object都用不了的Python2”  环境搭建123456git clone https://github.com/python/cpython.git -b 2.7cd">
@@ -121,6 +131,7 @@
 
 
   <link rel="canonical" href="https://q4n.github.io/2019/10/01/TCTF_2017_final_Python/">
+
 
 
 
@@ -295,6 +306,16 @@
           
 
           
+            
+              <span class="post-comments-count">
+                <span class="post-meta-divider">|</span>
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-comment-o"></i>
+                </span>
+                <a href="/2019/10/01/TCTF_2017_final_Python/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count gitment-comments-count" data-xid="/2019/10/01/TCTF_2017_final_Python/" itemprop="commentsCount"></span>
+                </a>
+              </span>
             
           
 
@@ -495,6 +516,13 @@
           
 
   
+    <div class="comments" id="comments">
+      
+        <div id="gitment-container"></div>
+      
+    </div>
+
+  
 
 
 
@@ -634,15 +662,9 @@
 </div>
 
 
-  <div class="powered-by">由 <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a> 强力驱动</div>
 
 
 
-  <span class="post-meta-divider">|</span>
-
-
-
-  <div class="theme-info">主题 &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Pisces</a> v5.1.4</div>
 
 
 
@@ -788,6 +810,43 @@
 
 
 
+
+
+<!-- LOCAL: You can save these files to your site and update links -->
+    
+        
+        <link rel="stylesheet" href="https://aimingoo.github.io/gitmint/style/default.css">
+        <script src="https://aimingoo.github.io/gitmint/dist/gitmint.browser.js"></script>
+    
+<!-- END LOCAL -->
+
+    
+
+    
+      <script type="text/javascript">
+      function renderGitment(){
+        var gitment = new Gitmint({
+            id: window.location.pathname, 
+            owner: '48317526',
+            repo: 'Q4n.github.io',
+            
+            lang: "" || navigator.language || navigator.systemLanguage || navigator.userLanguage,
+            
+            oauth: {
+            
+            
+                client_secret: 'd802fc1916bf445c7bab6c1718ba2134dabb7503',
+            
+                client_id: 'c76d7fa9e20aa4963c05'
+            }});
+        gitment.render('gitment-container');
+      }
+
+      
+      renderGitment();
+      
+      </script>
+    
 
 
 

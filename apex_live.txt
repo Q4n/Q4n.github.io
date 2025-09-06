@@ -1,0 +1,114 @@
+[
+  {
+    "name": "JDG-xd",
+    "type": "bilibili",
+    "room": "3281309",
+    "channel": "",
+    "url": "https://www.bilibili.com/blackboard/live/live-activity-player.html?cid=3281309"
+  },
+  {
+    "name": "DF-皮特",
+    "type": "bilibili",
+    "room": "1746",
+    "channel": "",
+    "url": "https://www.bilibili.com/blackboard/live/live-activity-player.html?cid=1746&sendpanel=1&mute=0&send=1"
+  },
+  {
+    "name": "狼队-文轩",
+    "type": "bilibili",
+    "room": "25803826",
+    "channel": "",
+    "url": "https://www.bilibili.com/blackboard/live/live-activity-player.html?cid=25803826"
+  },
+  {
+    "name": "VKG-卡莎",
+    "type": "bilibili",
+    "room": "1733394496",
+    "channel": "",
+    "url": "https://www.bilibili.com/blackboard/live/live-activity-player.html?cid=1733394496"
+  },
+  {
+    "name": "KD-大猫",
+    "type": "bilibili",
+    "room": "26369144",
+    "channel": "",
+    "url": "https://www.bilibili.com/blackboard/live/live-activity-player.html?cid=26369144"
+  },
+  {
+    "name": "VKG-老吊",
+    "type": "url",
+    "room": "",
+    "channel": "",
+    "url": "https://www.bilibili.com/blackboard/live/live-activity-player.html?cid=85001&sendpanel=1"
+  },
+  {
+    "name": "狼队-Noname",
+    "type": "bilibili",
+    "room": "1773507572",
+    "channel": "",
+    "url": "https://www.bilibili.com/blackboard/live/live-activity-player.html?cid=1773507572"
+  },
+  {
+    "name": "DCG-路易森",
+    "type": "twitch",
+    "room": "",
+    "channel": "lu1sannn",
+    "url": "https://player.twitch.tv/?channel=lu1sannn&parent=q4n.github.io"
+  },
+  {
+    "name": "JDG-yc",
+    "type": "bilibili",
+    "room": "23504744",
+    "channel": "",
+    "url": "https://www.bilibili.com/blackboard/live/live-activity-player.html?cid=23504744"
+  },
+  {
+    "name": "DCG-百弟",
+    "type": "twitch",
+    "room": "",
+    "channel": "roieee",
+    "url": "https://player.twitch.tv/?channel=roieee&parent=q4n.github.io"
+  },
+  {
+    "name": "DF-Bolin",
+    "type": "twitch",
+    "room": "",
+    "channel": "ttv_bolin",
+    "url": "https://player.twitch.tv/?channel=ttv_bolin&parent=q4n.github.io"
+  },
+  {
+    "name": "解说-滋崩",
+    "type": "url",
+    "room": "",
+    "channel": "",
+    "url": "https://www.bilibili.com/blackboard/live/live-activity-player.html?cid=768756&sendpanel=1"
+  },
+  {
+    "name": "VKG-QQ",
+    "type": "flv",
+    "room": "",
+    "channel": "",
+    "url": "https://pull-flv-l11.douyincdn.com/thirdgame/stream-694381578687873868.flv?arch_hrchy=h1&exp_hrchy=h1&expire=1757766720&major_anchor_level=common&sign=f7654980d30f8a02128dd491da85b5d3&t_id=037-20250906203159F85444498F930D66E764-aKi6H1&unique_id=stream-694381578687873868_844_flv&TxLiveCode=hot_stream&tencent_test_client_ip=223.73.211.209&dispatch_from=OC_MGR120.233.80.49&utime=1757162542432&TxDispType=0&abr_pts=-800&_session_id=037-20250906203159F85444498F930D66E764-aKi6H1.1757162582544.63862&rsi=1"
+  },
+  {
+    "name": "狼队-葱葱",
+    "type": "url",
+    "room": "",
+    "channel": "",
+    "url": "https://www.bilibili.com/blackboard/live/live-activity-player.html?cid=23118098&sendpanel=1"
+  },
+  {
+    "name": "JDG-JR",
+    "type": "bilibili",
+    "room": "5760379",
+    "channel": "",
+    "url": "https://www.bilibili.com/blackboard/live/live-activity-player.html?cid=5760379"
+  },
+  {
+    "name": "MDYB-幽灵",
+    "type": "bilibili",
+    "room": "5851637",
+    "channel": "",
+    "url": "https://www.bilibili.com/blackboard/live/live-activity-player.html?cid=5851637"
+  }
+]

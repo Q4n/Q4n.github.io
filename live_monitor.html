@@ -408,13 +408,21 @@ function toggleFocus(id){
   if(!is){
     el.classList.add('focus');
     focusedCellId = id;
-    // 聚焦时把 container 列调为 1 列以放大视图
     gridEl.style.gridTemplateColumns = '1fr';
+
+    // 让非焦点 cell 隐藏
+    Array.from(gridEl.children).forEach(ch=>{
+      if(ch !== el) ch.style.display = 'none';
+    });
   } else {
     focusedCellId = null;
+    // 恢复所有 cell
+    Array.from(gridEl.children).forEach(ch=>ch.style.display = '');
     applyLayout();
   }
 }
+
+
 function selectCell(id){ toggleFocus(id); }
 
 /* 初始化 */

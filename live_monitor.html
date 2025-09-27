@@ -51,7 +51,7 @@ html,body{height:100%;margin:0;font-family:Inter, system-ui, -apple-system, "Seg
     <h1>监控室 — 地址列表</h1>
     <div class="controls">
       <button id="btnAdd">添加</button>
-      <button id="btnIO">输入/输出</button>
+      <button id="btnIO">导入/导出</button>
     </div>
     <div class="list" id="list"></div>
     <div style="margin-top:8px;font-size:12px;color:#9fb8d4">
@@ -112,27 +112,31 @@ html,body{height:100%;margin:0;font-family:Inter, system-ui, -apple-system, "Seg
   </div>
 </div>
 
-<!-- IO 弹窗 -->
+<!-- 导入/导出弹窗 -->
 <div class="modal" id="modalIO">
   <div class="card">
-    <h3>输入/输出</h3>
+    <h3>导入 / 导出</h3>
     <div class="field">
       <textarea id="ioArea" placeholder="JSON 导入/导出内容"></textarea>
     </div>
     <div style="display:flex;gap:8px;justify-content:flex-end">
       <button id="ioCancel">取消</button>
       <button id="ioImport">导入</button>
+      <button id="ioOnlineImport">从online导入</button>
       <button id="ioExport">导出</button>
       <button id="ioDownload">下载TXT</button>
     </div>
-    <div class="muted" style="margin-top:8px">导出包括名称和类型，可直接复制或粘贴 JSON 导入。</div>
+    <div class="muted" style="margin-top:8px">
+      导出包括名称和类型，可直接复制或粘贴 JSON 导入。<br>
+      从online导入会读取当前路径下的 <code>apex_live.txt</code>。
+    </div>
   </div>
 </div>
 
 <script>
 /* ------------------------------
    IndexedDB (存储 streams)
-   ------------------------------ */
+------------------------------ */
 const DB_NAME='multiview-db',DB_STORE='streams';
 async function openDB(){ return new Promise((res,rej)=>{ const rq=indexedDB.open(DB_NAME,1); rq.onupgradeneeded=e=>{ const db=e.target.result; if(!db.objectStoreNames.contains(DB_STORE)) db.createObjectStore(DB_STORE,{keyPath:'id'}); }; rq.onsuccess=e=>res(e.target.result); rq.onerror=e=>rej(e.target.error); }); }
 async function dbGetAll(){ const db=await openDB(); return new Promise((res,rej)=>{ const tx=db.transaction(DB_STORE,'readonly'); const store=tx.objectStore(DB_STORE); const rq=store.getAll(); rq.onsuccess=e=>res(e.target.result); rq.onerror=e=>rej(e.target.error); }); }
@@ -141,7 +145,7 @@ async function dbDel(id){ const db=await openDB(); return new Promise((res,rej)=
 
 /* ------------------------------
    全局状态
-   ------------------------------ */
+------------------------------ */
 let editingId=null, cells=[], focusedCellId=null;
 const listEl=document.getElementById('list');
 const gridEl=document.getElementById('grid');
@@ -163,12 +167,13 @@ const ioCancel=document.getElementById('ioCancel');
 const ioImport=document.getElementById('ioImport');
 const ioExport=document.getElementById('ioExport');
 const ioDownload=document.getElementById('ioDownload');
+const ioOnlineImport=document.getElementById('ioOnlineImport');
 
 function uid(){ return 'id-'+Math.random().toString(36).slice(2,9); }
 
 /* ------------------------------
    列表刷新 / IndexedDB 操作 UI 绑定
-   ------------------------------ */
+------------------------------ */
 async function refreshList(){
   const data=await dbGetAll();
   listEl.innerHTML='';
@@ -187,7 +192,7 @@ async function refreshList(){
   });
 }
 
-/* 事件绑定： 按钮、弹窗 切换 */
+/* 事件绑定 */
 document.getElementById('btnAdd').onclick=()=>openModal();
 document.getElementById('modalCancel').onclick=closeModal;
 inType.onchange = () => {
@@ -197,7 +202,7 @@ inType.onchange = () => {
   else fieldUrl.style.display='block';
 };
 
-/* 保存地址（自动识别 url 中的 .m3u8/.flv 将类型改为 flv） */
+/* 保存地址 */
 document.getElementById('modalOk').onclick = async () => {
   const name=inName.value.trim();
   let type=inType.value;
@@ -242,192 +247,107 @@ function openModal(data){
 }
 function closeModal(){ modal.classList.remove('open'); }
 
-/* IO 弹窗 */
+/* ------------------------------
+   IO 弹窗事件
+------------------------------ */
 document.getElementById('btnIO').onclick = ()=>{ ioArea.value=''; modalIO.classList.add('open'); };
 ioCancel.onclick = ()=>{ modalIO.classList.remove('open'); };
-ioImport.onclick = async ()=>{ try{ const arr=JSON.parse(ioArea.value); if(!Array.isArray(arr)) throw 0; for(const it of arr){ const id=uid(); await dbPut({id,name:it.name||'untitled',type:it.type||'url',room:it.room||'',channel:it.channel||'',url:it.url||''}); } await refreshList(); alert('导入完成'); modalIO.classList.remove('open'); }catch(e){ alert('解析失败'); } };
-ioExport.onclick = async ()=>{ const data=await dbGetAll(); ioArea.value=JSON.stringify(data.map(it=>({name:it.name,type:it.type,room:it.room||'',channel:it.channel||'',url:it.url})),null,2); };
-ioDownload.onclick = ()=>{ const blob=new Blob([ioArea.value],{type:'text/plain'}); const a=document.createElement('a'); a.href=URL.createObjectURL(blob); a.download='streams.txt'; a.click(); };
+
+// 本地导入
+ioImport.onclick = async ()=>{
+  try{
+    const arr=JSON.parse(ioArea.value);
+    if(!Array.isArray(arr)) throw 0;
+    for(const it of arr){
+      const id=uid();
+      await dbPut({id,name:it.name||'untitled',type:it.type||'url',room:it.room||'',channel:it.channel||'',url:it.url||''});
+    }
+    await refreshList();
+    alert('导入完成'); modalIO.classList.remove('open');
+  }catch(e){ alert('解析失败'); }
+};
+
+// online 导入
+ioOnlineImport.onclick = async ()=>{
+  try{
+    const resp = await fetch('./apex_live.txt');
+    if(!resp.ok) throw new Error('无法获取 apex_live.txt');
+    const text = await resp.text();
+    const arr = JSON.parse(text);
+    if(!Array.isArray(arr)) throw 0;
+    for(const it of arr){
+      const id = uid();
+      await dbPut({id,name:it.name||'untitled',type:it.type||'url',room:it.room||'',channel:it.channel||'',url:it.url||''});
+    }
+    await refreshList();
+    alert('从online导入完成'); modalIO.classList.remove('open');
+  } catch(e){ console.error(e); alert('从online导入失败: '+e.message); }
+};
+
+// 导出
+ioExport.onclick = async ()=>{
+  const data = await dbGetAll();
+  ioArea.value = JSON.stringify(data.map(it=>({name:it.name,type:it.type,room:it.room||'',channel:it.channel||'',url:it.url})),null,2);
+};
+
+// 下载TXT
+ioDownload.onclick = ()=>{
+  const blob = new Blob([ioArea.value],{type:'text/plain'});
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download='streams.txt';
+  a.click();
+};
 
 /* 清空/快照 */
 document.getElementById('clearGrid').onclick=()=>{ cells.forEach(c=>destroyPlayer(c)); cells=[]; applyLayout(); };
-document.getElementById('saveSnapshot').onclick=()=>{ if(focusedCellId){ const c=cells.find(x=>x.id===focusedCellId); if(c) window.open(c.url,'_blank'); } else if(cells.length){ const urls=cells.map(c=>c.url).join('\n'); const w=window.open('about:blank'); w.document.body.innerText=urls; } else alert('没有画面'); };
+document.getElementById('saveSnapshot').onclick=()=>{
+  if(focusedCellId){
+    const c=cells.find(x=>x.id===focusedCellId);
+    if(c) window.open(c.url,'_blank');
+  } else if(cells.length){
+    const urls=cells.map(c=>c.url).join('\n');
+    const w=window.open('about:blank'); w.document.body.innerText=urls;
+  } else alert('没有画面');
+};
 
-/* ------------------------------
-   布局逻辑（动态调整列数）
-   - 当选中 1x1 且实际画面数 >1 时，会自动使用更合理的 cols（例如 2 或 3）
-   ------------------------------ */
+/* 布局逻辑 */
 layoutSelect.onchange = applyLayout;
 function applyLayout(){
   let n = parseInt(layoutSelect.value); 
   let total = cells.length;
   let cols;
-  if(total === 0){
-    cols = {1:1,4:2,9:3,16:4}[n] || 1;
-  } else if(total <= n){
-    cols = {1:1,4:2,9:3,16:4}[n] || 1;
-  } else {
-    if(total <= 4) cols = 2;
-    else if(total <= 9) cols = 3;
-    else cols = 4;
-  }
+  if(total === 0){ cols = {1:1,4:2,9:3,16:4}[n] || 1; }
+  else if(total <= n){ cols = {1:1,4:2,9:3,16:4}[n] || 1; }
+  else{ cols = Math.ceil(Math.sqrt(total)); }
   gridEl.style.gridTemplateColumns = `repeat(${cols},1fr)`;
-  renderGrid();
-}
-/* ------------------------------
-   播放器管理
-   ------------------------------ */
-function addToGrid(entry){ cells.push({ id: uid(), ...entry }); applyLayout(); }
-
-function destroyPlayer(cell){
-  try{
-    if(cell && cell._hls){ console.log('[HLS] destroy', cell.url); cell._hls.destroy(); cell._hls = null; }
-    if(cell && cell._flv){ console.log('[FLV] destroy', cell.url); cell._flv.destroy(); cell._flv = null; }
-  }catch(e){ console.warn('destroyPlayer fail', e); }
 }
 
-function removeCell(id){
-  const cell = cells.find(c=>c.id===id);
-  if(cell) destroyPlayer(cell);
-  cells = cells.filter(c=>c.id!==id);
-  if(focusedCellId===id) focusedCellId=null;
+/* 添加到 grid */
+function addToGrid(it){
+  const id=uid();
+  const div=document.createElement('div'); div.className='cell ghost'; div.id=id;
+  const label=document.createElement('div'); label.className='label'; label.textContent=it.name;
+  div.appendChild(label);
+  gridEl.appendChild(div);
+  const cell={id,url:it.url,el:div,player:null};
+  cells.push(cell);
+  initPlayer(cell,it.type);
   applyLayout();
 }
 
-/* ------------------------------
-   渲染 grid 核心（包含视频/iframe、overlay 按钮、事件）
-   ------------------------------ */
-function renderGrid(){
-  gridEl.innerHTML = '';
-  for(let i=0;i<cells.length;i++){
-    const cell = cells[i];
-    const wrapper = document.createElement('div');
-    wrapper.className = 'cell';
-    wrapper.setAttribute('data-id', cell.id);
-
-    // label
-    const label = document.createElement('div'); label.className='label'; label.textContent = cell.name || '';
-    wrapper.appendChild(label);
-
-    // overlay buttons (放大/弹出/移除)
-    const ov = document.createElement('div'); ov.className='overlay';
-    const btnFocus = document.createElement('button'); btnFocus.textContent='放大';
-    btnFocus.onclick = e => { e.stopPropagation(); toggleFocus(cell.id); };
-    const btnOpen = document.createElement('button'); btnOpen.textContent='弹出';
-    btnOpen.onclick = e => { e.stopPropagation(); window.open(cell.url); };
-    const btnDel = document.createElement('button'); btnDel.textContent='移除';
-    btnDel.onclick = e => { e.stopPropagation(); removeCell(cell.id); };
-    ov.appendChild(btnFocus); ov.appendChild(btnOpen); ov.appendChild(btnDel);
-    wrapper.appendChild(ov);
-
-    // 内容：video 或 iframe
-    if(cell.type === 'flv'){
-      const video = document.createElement('video');
-      video.controls = true;
-      video.autoplay = true;
-      video.muted = true;
-      video.playsInline = true;
-      // 强制样式，确保自适应
-      video.style.width = '100%';
-      video.style.height = '100%';
-      video.style.objectFit = 'contain';
-      // 点击视频本身切换播放，不冒泡到 wrapper
-      video.addEventListener('click', e => { e.stopPropagation(); if(video.paused) { video.play().catch(()=>{}); } else { video.pause(); } });
-
-      // 绑定 video 事件用于日志
-      ['loadedmetadata','play','pause','error','ended'].forEach(ev=>{
-        video.addEventListener(ev, ()=> console.log('[VIDEO]', ev, cell.url));
-      });
-
-      // HLS or FLV or direct src
-      try{
-        if(cell.url && cell.url.includes('.m3u8') && window.Hls && Hls.isSupported()){
-          console.log('[HLS] 尝试播放', cell.url);
-          const hls = new Hls();
-          hls.loadSource(cell.url);
-          hls.attachMedia(video);
-          hls.on(Hls.Events.MANIFEST_PARSED, ()=>console.log('[HLS] manifest parsed', cell.url));
-          hls.on(Hls.Events.ERROR, (evt,data)=>console.log('[HLS ERROR]', data));
-          cell._hls = hls;
-        } else if(cell.url && cell.url.includes('.flv') && window.flvjs && flvjs.isSupported()){
-          console.log('[FLV] 尝试播放', cell.url);
-          const flv = flvjs.createPlayer({type:'flv',url:cell.url});
-          flv.attachMediaElement(video);
-          flv.load();
-          // flv.play() 可能被浏览器策略拦截；autoplay + muted 可提高成功率
-          flv.play().catch(()=>{});
-          flv.on(flvjs.Events.METADATA_ARRIVED, ()=>console.log('[FLV] metadata arrived', cell.url));
-          flv.on(flvjs.Events.ERROR, (err)=>console.log('[FLV ERROR]', err));
-          cell._flv = flv;
-        } else {
-          console.log('[VIDEO] 直接设置 src', cell.url);
-          video.src = cell.url || '';
-        }
-      }catch(e){
-        console.warn('player create failed', e);
-        video.src = cell.url || '';
-      }
-
-      wrapper.appendChild(video);
-    } else {
-      // iframe 内容（普通 URL / Bilibili / Twitch）
-      const iframe = document.createElement('iframe');
-      iframe.src = cell.url || '';
-      iframe.allow = 'autoplay; fullscreen';
-      iframe.style.border = '0';
-      wrapper.appendChild(iframe);
-      // iframe 不应阻塞 overlay 操作：按钮 stopPropagation 已处理
-    }
-
-    // wrapper 点击（选择 / 聚焦）—— 但不要拦截视频点击（video 已 stopPropagation）
-    wrapper.addEventListener('click', e => {
-      // 如果点击的是 overlay 的按钮等（已 stopPropagation），这里只在点击 wrapper 本身或 label 时触发
-      if(e.target === wrapper || e.target.classList.contains('label')){
-        selectCell(cell.id);
-      }
-    });
-
-    // 将 wrapper 加入 grid
-    gridEl.appendChild(wrapper);
-  }
-
-  // 标记 focus
-  Array.from(gridEl.children).forEach(ch=>{
-    const id = ch.getAttribute('data-id');
-    if(id && id === focusedCellId) ch.classList.add('focus');
-    else ch.classList.remove('focus');
-  });
-}
-
-/* 聚焦 / 还原 */
-function toggleFocus(id){
-  const el = gridEl.querySelector('[data-id="'+id+'"]');
-  if(!el) return;
-  const is = el.classList.contains('focus');
-  document.querySelectorAll('.cell.focus').forEach(x=>x.classList.remove('focus'));
-  if(!is){
-    el.classList.add('focus');
-    focusedCellId = id;
-    gridEl.style.gridTemplateColumns = '1fr';
-
-    // 让非焦点 cell 隐藏
-    Array.from(gridEl.children).forEach(ch=>{
-      if(ch !== el) ch.style.display = 'none';
-    });
+/* 播放器初始化 */
+function initPlayer(cell,type){
+  const url=cell.url;
+  if(type==='flv'){
+    if(flvjs.isSupported()){ const player=flvjs.createPlayer({type:'flv',url}); player.attachMediaElement(cell.el.appendChild(document.createElement('video'))); player.load(); player.play(); cell.player=player; }
   } else {
-    focusedCellId = null;
-    // 恢复所有 cell
-    Array.from(gridEl.children).forEach(ch=>ch.style.display = '');
-    applyLayout();
+    if(Hls.isSupported() && url.endsWith('.m3u8')){ const video=document.createElement('video'); video.controls=true; cell.el.appendChild(video); const hls=new Hls(); hls.loadSource(url); hls.attachMedia(video); video.play(); cell.player=hls; }
+    else{ const iframe=document.createElement('iframe'); iframe.src=url; iframe.allow='autoplay;fullscreen'; cell.el.appendChild(iframe); }
   }
 }
-
-
-function selectCell(id){ toggleFocus(id); }
-
-/* 初始化 */
-refreshList().then(()=>{ applyLayout(); });
-
+function destroyPlayer(cell){ if(cell.player && cell.player.destroy) cell.player.destroy(); if(cell.el) cell.el.remove(); }
+refreshList();
 </script>
 </body>
 </html>
